@@ -48,7 +48,7 @@ src/
 
 ### Bước 1: Clone repository
 ```bash
-git clone https://github.com/VTADuong/TalentLink.git
+git clone https://github.com/VTADuong/talentlink-project.git
 cd TalentLink
 ```
 
