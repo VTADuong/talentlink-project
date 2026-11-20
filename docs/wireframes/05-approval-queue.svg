@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 520" width="100%" height="100%" font-family="Arial, sans-serif">
+  <rect width="850" height="520" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <!-- Top Bar -->
+  <rect width="850" height="56" fill="#1e293b"/>
+  <text x="24" y="34" font-size="17" font-weight="bold" fill="#ffffff">[Admin] TalentLink Quản trị</text>
+  <text x="520" y="34" font-size="13" fill="#cbd5e1">Quản trị tài khoản</text>
+  <text x="660" y="34" font-size="13" font-weight="bold" fill="#38bdf8">Hàng chờ duyệt (2)</text>
+
+  <!-- Main Panel -->
+  <rect x="24" y="76" width="802" height="420" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="48" y="110" font-size="18" font-weight="bold" fill="#0f172a">HÀNG CHỜ DUYỆT HỒ SƠ ỨNG VIÊN</text>
+  <text x="48" y="130" font-size="12" fill="#64748b">Kiểm duyệt nội dung hồ sơ trước khi hiển thị công khai cho Nhà tuyển dụng</text>
+
+  <!-- Queue Item 1 -->
+  <rect x="48" y="150" width="754" height="115" rx="6" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="68" y="176" font-size="15" font-weight="bold" fill="#0f172a">1. Nguyễn Văn A — Java Backend Developer (2 năm KN)</text>
+  <text x="68" y="198" font-size="12" fill="#475569">Kỹ năng: Java, Spring Boot, Thymeleaf, MySQL, Flyway | Địa điểm: Hà Nội | Gửi lúc: 20/11/2026 19:30</text>
+  <text x="68" y="218" font-size="12" fill="#2563eb">[Xem chi tiết hồ sơ &amp; CV đính kèm]</text>
+
+  <rect x="530" y="215" width="120" height="34" rx="5" fill="#16a34a"/>
+  <text x="590" y="237" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">✓ Phê duyệt</text>
+  <rect x="664" y="215" width="120" height="34" rx="5" fill="#dc2626"/>
+  <text x="724" y="237" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">✕ Từ chối</text>
+
+  <!-- Queue Item 2 + Reject Reason Modal Preview -->
+  <rect x="48" y="280" width="754" height="190" rx="6" fill="#fff1f2" stroke="#f43f5e"/>
+  <text x="68" y="306" font-size="15" font-weight="bold" fill="#0f172a">2. Phạm Minh B — Frontend Intern (0 năm KN)</text>
+  <text x="68" y="326" font-size="12" fill="#475569">Kỹ năng: HTML, CSS | Địa điểm: TP.HCM | Gửi lúc: 20/11/2026 20:00</text>
+
+  <text x="68" y="356" font-size="12" font-weight="bold" fill="#9f1239">Nhập lý do từ chối (bắt buộc khi bấm Từ chối): *</text>
+  <rect x="68" y="364" width="560" height="36" rx="4" fill="#ffffff" stroke="#e11d48"/>
+  <text x="80" y="387" font-size="12" fill="#334155">Vui lòng bổ sung thông tin Học vấn, Dự án đã làm và đính kèm file CV hợp lệ.</text>
+
+  <rect x="644" y="364" width="140" height="36" rx="5" fill="#e11d48"/>
+  <text x="714" y="387" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">Xác nhận Từ chối</text>
+</svg>

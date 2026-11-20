@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 540" width="100%" height="100%" font-family="Arial, sans-serif">
+  <rect width="850" height="540" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <!-- Top Navbar -->
+  <rect width="850" height="56" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="24" y="34" font-size="18" font-weight="bold" fill="#1e293b">[Logo] TalentLink</text>
+  <text x="480" y="34" font-size="13" font-weight="bold" fill="#2563eb">Tìm ứng viên</text>
+  <text x="595" y="34" font-size="13" fill="#475569">Yêu cầu phỏng vấn</text>
+  <text x="735" y="34" font-size="13" fill="#334155">[NTD: FPT HR]</text>
+
+  <!-- Search & Filter Box -->
+  <rect x="24" y="72" width="802" height="72" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <rect x="40" y="88" width="230" height="38" rx="4" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="52" y="112" font-size="12" fill="#94a3b8">Từ khóa (Java, Backend...)</text>
+
+  <rect x="282" y="88" width="150" height="38" rx="4" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="294" y="112" font-size="12" fill="#334155">Kỹ năng: Spring Boot ▾</text>
+
+  <rect x="444" y="88" width="130" height="38" rx="4" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="456" y="112" font-size="12" fill="#334155">KN: Từ 1+ năm ▾</text>
+
+  <rect x="586" y="88" width="110" height="38" rx="4" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="598" y="112" font-size="12" fill="#334155">Hà Nội ▾</text>
+
+  <rect x="708" y="88" width="102" height="38" rx="6" fill="#2563eb"/>
+  <text x="759" y="112" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">Tìm kiếm</text>
+
+  <!-- Candidate Grid (2 Cards per row) -->
+  <!-- Card 1 -->
+  <rect x="24" y="162" width="390" height="165" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <circle cx="68" cy="206" r="24" fill="#dbeafe"/>
+  <text x="68" y="211" font-size="13" font-weight="bold" fill="#1e40af" text-anchor="middle">NA</text>
+  <text x="104" y="198" font-size="15" font-weight="bold" fill="#0f172a">Nguyễn Văn A</text>
+  <text x="104" y="216" font-size="12" fill="#475569">Java Backend Developer • 2 năm KN • Hà Nội</text>
+  <rect x="44" y="236" width="60" height="22" rx="4" fill="#eff6ff"/><text x="74" y="251" font-size="11" fill="#1d4ed8" text-anchor="middle">Java 17</text>
+  <rect x="112" y="236" width="80" height="22" rx="4" fill="#eff6ff"/><text x="152" y="251" font-size="11" fill="#1d4ed8" text-anchor="middle">Spring Boot</text>
+  <rect x="200" y="236" width="60" height="22" rx="4" fill="#eff6ff"/><text x="230" y="251" font-size="11" fill="#1d4ed8" text-anchor="middle">MySQL</text>
+  <rect x="44" y="276" width="160" height="34" rx="5" fill="#f1f5f9" stroke="#64748b"/>
+  <text x="124" y="298" font-size="12" font-weight="bold" fill="#334155" text-anchor="middle">Xem chi tiết</text>
+  <rect x="218" y="276" width="176" height="34" rx="5" fill="#2563eb"/>
+  <text x="306" y="298" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">Mời phỏng vấn</text>
+
+  <!-- Card 2 -->
+  <rect x="436" y="162" width="390" height="165" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <circle cx="480" cy="206" r="24" fill="#dcfce7"/>
+  <text x="480" y="211" font-size="13" font-weight="bold" fill="#166534" text-anchor="middle">LH</text>
+  <text x="516" y="198" font-size="15" font-weight="bold" fill="#0f172a">Lê Thu Hương</text>
+  <text x="516" y="216" font-size="12" fill="#475569">Fullstack Java / React • 3 năm KN • Hà Nội</text>
+  <rect x="456" y="236" width="80" height="22" rx="4" fill="#eff6ff"/><text x="496" y="251" font-size="11" fill="#1d4ed8" text-anchor="middle">Spring Boot</text>
+  <rect x="544" y="236" width="65" height="22" rx="4" fill="#eff6ff"/><text x="576" y="251" font-size="11" fill="#1d4ed8" text-anchor="middle">ReactJS</text>
+  <rect x="617" y="236" width="60" height="22" rx="4" fill="#eff6ff"/><text x="647" y="251" font-size="11" fill="#1d4ed8" text-anchor="middle">Docker</text>
+  <rect x="456" y="276" width="160" height="34" rx="5" fill="#f1f5f9" stroke="#64748b"/>
+  <text x="536" y="298" font-size="12" font-weight="bold" fill="#334155" text-anchor="middle">Xem chi tiết</text>
+  <rect x="630" y="276" width="176" height="34" rx="5" fill="#2563eb"/>
+  <text x="718" y="298" font-size="12" font-weight="bold" fill="#ffffff" text-anchor="middle">Mời phỏng vấn</text>
+
+  <!-- Pagination Footer -->
+  <rect x="315" y="480" width="220" height="34" rx="4" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="425" y="502" font-size="12" fill="#334155" text-anchor="middle">« Trang trước | 1 / 4 | Trang sau »</text>
+</svg>
