@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 850 560" width="100%" height="100%" font-family="Arial, sans-serif">
+  <rect width="850" height="560" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <!-- Top Navbar -->
+  <rect width="850" height="56" fill="#ffffff" stroke="#cbd5e1"/>
+  <text x="24" y="34" font-size="18" font-weight="bold" fill="#1e293b">[Logo] TalentLink</text>
+  <text x="480" y="34" font-size="13" font-weight="bold" fill="#2563eb">Hồ sơ của tôi</text>
+  <text x="590" y="34" font-size="13" fill="#475569">Yêu cầu phỏng vấn (2)</text>
+  <text x="750" y="34" font-size="13" fill="#334155">[Ứng viên A]</text>
+
+  <!-- Left Sidebar Summary -->
+  <rect x="24" y="76" width="230" height="460" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <circle cx="139" cy="135" r="36" fill="#e2e8f0" stroke="#64748b"/>
+  <text x="139" y="140" font-size="11" fill="#475569" text-anchor="middle">Ảnh đại diện</text>
+  <text x="139" y="192" font-size="15" font-weight="bold" fill="#0f172a" text-anchor="middle">Nguyễn Văn A</text>
+  <text x="139" y="210" font-size="12" fill="#64748b" text-anchor="middle">Java Backend Developer</text>
+
+  <!-- Approval Status Badge -->
+  <rect x="44" y="228" width="190" height="32" rx="4" fill="#fef9c3" stroke="#eab308"/>
+  <text x="139" y="248" font-size="12" font-weight="bold" fill="#854d0e" text-anchor="middle">Trạng thái: CHỜ DUYỆT</text>
+
+  <!-- Open to work toggle -->
+  <rect x="44" y="274" width="190" height="36" rx="4" fill="#f0fdf4" stroke="#22c55e"/>
+  <text x="139" y="296" font-size="12" font-weight="bold" fill="#15803d" text-anchor="middle">[ON] Đang bật tìm việc</text>
+
+  <!-- CV Upload Box -->
+  <text x="44" y="338" font-size="12" font-weight="bold" fill="#334155">CV đính kèm (PDF)</text>
+  <rect x="44" y="346" width="190" height="55" rx="4" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="4"/>
+  <text x="139" y="370" font-size="11" fill="#475569" text-anchor="middle">CV_NguyenVanA.pdf</text>
+  <text x="139" y="388" font-size="11" fill="#2563eb" text-anchor="middle">[Tải lên CV mới]</text>
+
+  <!-- Main Profile Form -->
+  <rect x="274" y="76" width="552" height="460" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+  <text x="298" y="110" font-size="18" font-weight="bold" fill="#0f172a">HỒ SƠ CỦA TÔI</text>
+
+  <!-- Form Row 1 -->
+  <text x="298" y="140" font-size="12" font-weight="bold" fill="#334155">Chức danh chuyên môn *</text>
+  <rect x="298" y="148" width="240" height="32" rx="4" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="308" y="168" font-size="12" fill="#334155">Java Backend Developer</text>
+
+  <text x="560" y="140" font-size="12" font-weight="bold" fill="#334155">Số năm kinh nghiệm *</text>
+  <rect x="560" y="148" width="110" height="32" rx="4" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="572" y="168" font-size="12" fill="#334155">2 năm</text>
+
+  <text x="685" y="140" font-size="12" font-weight="bold" fill="#334155">Địa điểm *</text>
+  <rect x="685" y="148" width="115" height="32" rx="4" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="695" y="168" font-size="12" fill="#334155">Hà Nội</text>
+
+  <!-- Skills -->
+  <text x="298" y="204" font-size="12" font-weight="bold" fill="#334155">Kỹ năng chuyên môn (Skills) *</text>
+  <rect x="298" y="212" width="502" height="36" rx="4" fill="#f8fafc" stroke="#94a3b8"/>
+  <rect x="306" y="218" width="55" height="24" rx="4" fill="#dbeafe"/><text x="333" y="234" font-size="11" fill="#1e40af" text-anchor="middle">Java ×</text>
+  <rect x="368" y="218" width="85" height="24" rx="4" fill="#dbeafe"/><text x="410" y="234" font-size="11" fill="#1e40af" text-anchor="middle">Spring Boot ×</text>
+  <rect x="460" y="218" width="60" height="24" rx="4" fill="#dbeafe"/><text x="490" y="234" font-size="11" fill="#1e40af" text-anchor="middle">MySQL ×</text>
+  <text x="535" y="234" font-size="11" fill="#94a3b8">+ Thêm kỹ năng...</text>
+
+  <!-- Bio / Summary -->
+  <text x="298" y="272" font-size="12" font-weight="bold" fill="#334155">Giới thiệu bản thân &amp; Mục tiêu nghề nghiệp</text>
+  <rect x="298" y="280" width="502" height="60" rx="4" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="310" y="302" font-size="12" fill="#475569">Lập trình viên Java với 2 năm kinh nghiệm phát triển Web bằng Spring Boot, JPA, MySQL...</text>
+
+  <!-- Experience & Education -->
+  <text x="298" y="364" font-size="12" font-weight="bold" fill="#334155">Kinh nghiệm làm việc &amp; Dự án nổi bật *</text>
+  <rect x="298" y="372" width="502" height="85" rx="4" fill="#f8fafc" stroke="#94a3b8"/>
+  <text x="310" y="394" font-size="12" fill="#334155">• 2024 - 2026: Backend Developer tại Công ty ABC (Xây dựng REST API &amp; Web MVC)</text>
+  <text x="310" y="414" font-size="12" fill="#334155">• Học vấn: Kỹ sư Công nghệ thông tin - Đại học Bách Khoa</text>
+
+  <!-- Action Buttons -->
+  <rect x="520" y="478" width="120" height="38" rx="6" fill="#f1f5f9" stroke="#64748b"/>
+  <text x="580" y="502" font-size="13" font-weight="bold" fill="#334155" text-anchor="middle">Lưu nháp</text>
+
+  <rect x="655" y="478" width="145" height="38" rx="6" fill="#2563eb"/>
+  <text x="727" y="502" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">Gửi duyệt hồ sơ</text>
+</svg>

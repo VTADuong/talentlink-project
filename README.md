@@ -48,8 +48,8 @@ src/
 
 ### Bước 1: Clone repository
 ```bash
-git clone https://github.com/VTADuong/TalentLink.git
-cd TalentLink
+git clone https://github.com/VTADuong/talentlink-project.git
+cd talentlink-project
 ```
 
 ### Bước 2: Thiết lập biến môi trường cho profile `dev`
