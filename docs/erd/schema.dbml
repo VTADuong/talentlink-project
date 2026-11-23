@@ -1,0 +1,208 @@
+// TalentLink Database Schema (DBML) — Task T4E7A9B
+// Có thể copy file này dán vào https://dbdiagram.io để xem trực tiếp
+
+Table users {
+  id bigint [pk, increment]
+  email varchar(150) [not null, unique]
+  password_hash varchar(255) [not null]
+  full_name varchar(100) [not null]
+  phone varchar(20)
+  role varchar(20) [not null, note: 'CANDIDATE | RECRUITER | ADMIN']
+  is_locked boolean [not null, default: false]
+  locked_reason varchar(255)
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  Indexes {
+    (role, is_locked) [name: 'idx_users_role_locked']
+  }
+}
+
+Table profiles {
+  id bigint [pk, increment]
+  user_id bigint [not null, unique, ref: - users.id]
+  headline varchar(150) [not null]
+  bio text
+  years_of_experience int [not null, default: 0]
+  location varchar(100)
+  expected_salary decimal(12,2)
+  cv_url varchar(255)
+  avatar_url varchar(255)
+  is_open_to_work boolean [not null, default: true]
+  approval_status varchar(25) [not null, default: 'DRAFT', note: 'DRAFT | PENDING | APPROVED | REJECTED']
+  submitted_at datetime
+  approved_at datetime
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  Indexes {
+    (approval_status, is_open_to_work, location, years_of_experience) [name: 'idx_profiles_search']
+    (approval_status, submitted_at) [name: 'idx_profiles_approval_queue']
+  }
+}
+
+Table educations {
+  id bigint [pk, increment]
+  profile_id bigint [not null, ref: > profiles.id]
+  school_name varchar(150) [not null]
+  degree varchar(100)
+  major varchar(150)
+  gpa decimal(3,2)
+  start_date date
+  end_date date
+  description text
+  created_at datetime [not null]
+
+  Indexes {
+    (profile_id, start_date) [name: 'idx_educations_profile']
+  }
+}
+
+Table skills {
+  id bigint [pk, increment]
+  name varchar(100) [not null, unique]
+  slug varchar(100) [not null, unique]
+  category varchar(50)
+  created_at datetime [not null]
+}
+
+Table profile_skills {
+  id bigint [pk, increment]
+  profile_id bigint [not null, ref: > profiles.id]
+  skill_id bigint [not null, ref: > skills.id]
+  proficiency_level tinyint [not null, note: 'CHECK 1..5']
+  years_used decimal(3,1) [default: 0]
+  created_at datetime [not null]
+
+  Indexes {
+    (profile_id, skill_id) [unique, name: 'uk_profile_skills_pair']
+    (skill_id, proficiency_level) [name: 'idx_profile_skills_filter']
+  }
+}
+
+Table projects {
+  id bigint [pk, increment]
+  profile_id bigint [not null, ref: > profiles.id]
+  project_name varchar(150) [not null]
+  role_in_project varchar(100)
+  tech_stack varchar(255)
+  project_url varchar(255)
+  start_date date
+  end_date date
+  description text
+  created_at datetime [not null]
+
+  Indexes {
+    (profile_id) [name: 'idx_projects_profile']
+  }
+}
+
+Table certificates {
+  id bigint [pk, increment]
+  profile_id bigint [not null, ref: > profiles.id]
+  certificate_name varchar(150) [not null]
+  issuing_organization varchar(150) [not null]
+  issue_date date
+  expiry_date date
+  credential_url varchar(255)
+  created_at datetime [not null]
+
+  Indexes {
+    (profile_id) [name: 'idx_certificates_profile']
+  }
+}
+
+Table companies {
+  id bigint [pk, increment]
+  user_id bigint [not null, unique, ref: - users.id]
+  company_name varchar(150) [not null]
+  tax_code varchar(50)
+  website varchar(255)
+  logo_url varchar(255)
+  company_size varchar(50)
+  address varchar(255)
+  description text
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  Indexes {
+    (company_name) [name: 'idx_companies_name']
+  }
+}
+
+Table shortlists {
+  id bigint [pk, increment]
+  recruiter_id bigint [not null, ref: > users.id]
+  profile_id bigint [not null, ref: > profiles.id]
+  note varchar(255)
+  created_at datetime [not null]
+
+  Indexes {
+    (recruiter_id, profile_id) [unique, name: 'uk_shortlists_recruiter_profile']
+    (profile_id) [name: 'idx_shortlists_profile']
+  }
+}
+
+Table interview_requests {
+  id bigint [pk, increment]
+  recruiter_id bigint [not null, ref: > users.id]
+  company_id bigint [not null, ref: > companies.id]
+  profile_id bigint [not null, ref: > profiles.id]
+  job_title varchar(150) [not null]
+  scheduled_at datetime [not null]
+  mode varchar(20) [not null, note: 'ONLINE | OFFLINE']
+  meeting_link_or_location varchar(255) [not null]
+  message text
+  candidate_response_note text
+  status varchar(20) [not null, default: 'PENDING', note: 'PENDING | ACCEPTED | DECLINED | CANCELLED']
+  created_at datetime [not null]
+  updated_at datetime [not null]
+
+  Indexes {
+    (profile_id, status, scheduled_at) [name: 'idx_interviews_profile_status']
+    (recruiter_id, status, scheduled_at) [name: 'idx_interviews_recruiter_status']
+  }
+}
+
+Table profile_reviews {
+  id bigint [pk, increment]
+  profile_id bigint [not null, ref: > profiles.id]
+  reviewer_id bigint [not null, ref: > users.id]
+  decision varchar(20) [not null, note: 'APPROVED | REJECTED']
+  rejection_reason text
+  reviewed_at datetime [not null]
+
+  Indexes {
+    (profile_id, reviewed_at) [name: 'idx_profile_reviews_history']
+    (reviewer_id, reviewed_at) [name: 'idx_profile_reviews_reviewer']
+  }
+}
+
+Table notifications {
+  id bigint [pk, increment]
+  recipient_id bigint [not null, ref: > users.id]
+  type varchar(40) [not null]
+  title varchar(200) [not null]
+  content text [not null]
+  reference_url varchar(255)
+  is_read boolean [not null, default: false]
+  created_at datetime [not null]
+
+  Indexes {
+    (recipient_id, is_read, created_at) [name: 'idx_notifications_recipient_unread']
+  }
+}
+
+Table profile_views {
+  id bigint [pk, increment]
+  profile_id bigint [not null, ref: > profiles.id]
+  viewer_id bigint [ref: > users.id]
+  ip_address varchar(45)
+  user_agent varchar(255)
+  viewed_at datetime [not null]
+
+  Indexes {
+    (profile_id, viewed_at) [name: 'idx_profile_views_profile_time']
+    (viewer_id, viewed_at) [name: 'idx_profile_views_viewer']
+  }
+}

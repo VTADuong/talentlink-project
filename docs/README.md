@@ -26,3 +26,8 @@ Thư mục này lưu trữ tài liệu đặc tả yêu cầu (**User Stories**)
 
 3. **[Bản Wireframe HTML trực quan (`docs/wireframes/index.html`)](wireframes/index.html)**
    - Có thể mở trực tiếp trên trình duyệt để xem và chuyển đổi qua lại giữa 8 màn hình wireframe.
+
+4. **[Thiết kế CSDL & Sơ đồ ERD 13 bảng (`docs/database-design.md`)](database-design.md)** *(Task `T4E7A9B`)*
+   - Đặc tả chi tiết 13 bảng: `users`, `profiles`, `educations`, `skills`, `profile_skills` (mức 1–5), `projects`, `certificates`, `companies`, `shortlists`, `interview_requests`, `profile_reviews`, `notifications`, `profile_views`.
+   - Sơ đồ ERD trực quan ([`erd/talentlink-erd.svg`](erd/talentlink-erd.svg) & Mermaid `erDiagram`) + Mã nguồn DBML ([`erd/schema.dbml`](erd/schema.dbml)).
+   - Giải thích chi tiết toàn bộ 16 Khóa ngoại (Foreign Keys) và 11 Chỉ mục chính (Indexes).
