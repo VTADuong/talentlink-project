@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Vùng thông báo dùng chung (Flash Messages & System Alerts) -->
+<div th:fragment="alerts" class="container mt-3">
+    <!-- Thông báo thành công -->
+    <div th:if="${successMessage != null}" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        <span th:text="${successMessage}">Thao tác thành công!</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Thông báo lỗi -->
+    <div th:if="${errorMessage != null}" class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        <span th:text="${errorMessage}">Đã xảy ra lỗi!</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Thông báo cảnh báo -->
+    <div th:if="${warningMessage != null}" class="alert alert-warning alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-exclamation-circle-fill me-2"></i>
+        <span th:text="${warningMessage}">Cảnh báo!</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Thông báo thông tin -->
+    <div th:if="${infoMessage != null}" class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        <span th:text="${infoMessage}">Thông báo hệ thống.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Thông báo khi đăng xuất thành công qua query param ?logout -->
+    <div th:if="${param.logout != null}" class="alert alert-info alert-dismissible fade show shadow-sm" role="alert">
+        <i class="bi bi-check2-circle me-2"></i>
+        <span>Bạn đã đăng xuất khỏi hệ thống thành công.</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</div>
+</body>
+</html>

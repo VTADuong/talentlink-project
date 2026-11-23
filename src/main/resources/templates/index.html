@@ -1,10 +1,98 @@
 <!DOCTYPE html>
-<html lang="vi" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TalentLink</title>
-</head>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layouts/main-layout :: layout('Trang chủ', ~{::section})}">
 <body>
+<section class="container">
+    <div class="p-5 mb-4 bg-white rounded-3 border shadow-sm">
+        <div class="container-fluid py-3">
+            <span class="badge bg-primary-subtle text-primary mb-2 px-3 py-2 rounded-pill">
+                <i class="bi bi-stars me-1"></i>Nền tảng Kết nối Nhân tài Trẻ
+            </span>
+            <h1 class="display-6 fw-bold text-dark">Chào mừng đến với TalentLink</h1>
+            <p class="col-md-8 fs-6 text-secondary">
+                Hệ thống quản lý hồ sơ năng lực sinh viên, xét duyệt chuẩn hóa và kết nối phỏng vấn trực tiếp
+                với các doanh nghiệp đối tác công nghệ.
+            </p>
+
+            <!-- Nút hành động theo trạng thái đăng nhập & vai trò -->
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <div sec:authorize="isAnonymous()" class="d-flex gap-2">
+                    <a th:href="@{/login}" class="btn btn-primary px-4">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập ngay
+                    </a>
+                    <a th:href="@{/register}" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-person-plus me-1"></i>Đăng ký tài khoản
+                    </a>
+                </div>
+
+                <div sec:authorize="hasRole('CANDIDATE')" class="d-flex gap-2">
+                    <a th:href="@{/candidate/profile}" class="btn btn-primary px-4">
+                        <i class="bi bi-person-badge me-1"></i>Cập nhật Hồ sơ của tôi
+                    </a>
+                    <a th:href="@{/interviews}" class="btn btn-outline-primary px-4">
+                        <i class="bi bi-calendar2-check me-1"></i>Xem Yêu cầu phỏng vấn
+                    </a>
+                </div>
+
+                <div sec:authorize="hasRole('RECRUITER')" class="d-flex gap-2">
+                    <a th:href="@{/candidates}" class="btn btn-primary px-4">
+                        <i class="bi bi-search me-1"></i>Tìm kiếm Ứng viên
+                    </a>
+                    <a th:href="@{/interviews}" class="btn btn-outline-primary px-4">
+                        <i class="bi bi-calendar-event me-1"></i>Quản lý Lịch phỏng vấn
+                    </a>
+                </div>
+
+                <div sec:authorize="hasRole('ADMIN')" class="d-flex gap-2">
+                    <a th:href="@{/admin/approvals}" class="btn btn-primary px-4">
+                        <i class="bi bi-clipboard2-check me-1"></i>Hàng chờ duyệt hồ sơ
+                    </a>
+                    <a th:href="@{/admin/accounts}" class="btn btn-outline-dark px-4">
+                        <i class="bi bi-people me-1"></i>Quản trị tài khoản
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3 khối tính năng theo 3 vai trò -->
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-primary fs-3 mb-2"><i class="bi bi-mortarboard-fill"></i></div>
+                    <h5 class="card-title fw-bold">Dành cho Sinh viên / Ứng viên</h5>
+                    <p class="card-text text-muted small">
+                        Xây dựng hồ sơ năng lực chuẩn hóa gồm học vấn, kỹ năng mức 1–5, dự án thực tế, chứng chỉ và nhận lời mời phỏng vấn.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-success fs-3 mb-2"><i class="bi bi-building-check"></i></div>
+                    <h5 class="card-title fw-bold">Dành cho Đối tác Tuyển dụng</h5>
+                    <p class="card-text text-muted small">
+                        Tìm kiếm và lọc ứng viên đã được kiểm duyệt theo kỹ năng, mức độ thành thạo, lưu shortlist và đặt lịch phỏng vấn.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <div class="text-warning fs-3 mb-2"><i class="bi bi-shield-check"></i></div>
+                    <h5 class="card-title fw-bold">Kiểm duyệt Chất lượng</h5>
+                    <p class="card-text text-muted small">
+                        Quản trị viên xét duyệt hồ sơ trong hàng chờ duyệt, đảm bảo thông tin minh bạch và chất lượng trước khi công khai.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 </body>
 </html>
