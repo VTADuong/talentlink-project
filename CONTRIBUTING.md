@@ -14,13 +14,13 @@ Nhóm sử dụng mô hình phân nhánh chuẩn:
 - **`bugfix/<tên-task>`**: Nhánh sửa lỗi phát sinh trong quá trình phát triển.
 - **`hotfix/<tên-task>`**: Nhánh sửa lỗi khẩn cấp trên nhánh `main`.
 
-### Quy tắc đặt `<tên-task>`:
+### Quy tắc đặt `<tên-task>` (Kèm Mã Task để tự động gắn vào hệ thống):
 - Sử dụng chữ thường (`lowercase`), không dấu, các từ nối nhau bằng dấu gạch ngang (`kebab-case`).
-- Ngắn gọn, mô tả đúng chức năng của task.
+- Đưa **mã task** vào đầu tên nhánh theo mẫu `feature/<ma-task>-<ten-ngan>` để hệ thống quản lý tự động liên kết nhánh và PR vào task.
 
 **Ví dụ hợp lệ:**
-- `feature/init-project-structure`
-- `feature/auth-login-register`
+- `feature/t4e7a99-init-project`
+- `feature/t4e7a99-auth-login-register`
 - `feature/job-posting-crud`
 - `bugfix/fix-login-redirect`
 
@@ -29,13 +29,19 @@ Nhóm sử dụng mô hình phân nhánh chuẩn:
 
 ---
 
-## 2. Quy ước Commit Message (Conventional Commits)
+## 2. Quy ước Commit Message (Conventional Commits + Mã Task)
 
-Mọi commit phải tuân theo định dạng:
+Mọi commit phải gắn **Mã Task** và tuân theo định dạng:
 
 ```text
-<type>(<scope tùy chọn>): <mô tả ngắn gọn>
+<MA_TASK>: <type>: <mô tả ngắn gọn>
 ```
+*(Hoặc `<type>(<scope>): <mô tả ngắn gọn>` khi không có mã task riêng)*.
+
+**Ví dụ kèm mã task:**
+- `T4E7A99: chore: khởi tạo dự án Spring Boot 3 và cấu trúc package 6 tầng`
+- `T4E7A99: feat: thêm trang chủ trống và cấu hình profile dev`
+- `T4E7A99: docs: cập nhật quy ước nhánh, commit và mẫu PR`
 
 ### Danh sách `<type>` chuẩn:
 | Type | Ý nghĩa | Ví dụ |

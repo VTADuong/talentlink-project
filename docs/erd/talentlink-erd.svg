@@ -1,0 +1,232 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1020" width="100%" height="100%" font-family="Arial, sans-serif">
+  <rect width="1400" height="1020" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="700" y="36" font-size="22" font-weight="bold" fill="#0f172a" text-anchor="middle">SƠ ĐỒ ERD HỆ THỐNG TALENTLINK (13 BẢNG — TASK T4E7A9B)</text>
+  <text x="700" y="56" font-size="12" fill="#475569" text-anchor="middle">MySQL 8.0 (InnoDB, utf8mb4) • PK: Khóa chính | FK: Khóa ngoại | UK: Khóa duy nhất</text>
+
+  <!-- RELATIONSHIP LINES -->
+  <g stroke="#64748b" stroke-width="1.8" fill="none">
+    <!-- users -> profiles (1:1) -->
+    <path d="M 300 210 L 520 210"/>
+    <!-- users -> companies (1:1) -->
+    <path d="M 170 330 L 170 400"/>
+    <!-- users -> notifications (1:N) -->
+    <path d="M 100 330 L 100 630"/>
+    <!-- users -> shortlists (1:N) -->
+    <path d="M 300 290 L 430 290 L 430 670 L 520 670"/>
+    <!-- users -> interview_requests (recruiter_id) -->
+    <path d="M 300 310 L 395 310 L 395 860 L 520 860"/>
+    <!-- users -> profile_reviews (reviewer_id) -->
+    <path d="M 300 260 L 460 260 L 460 475 L 520 475"/>
+    <!-- users -> profile_views (viewer_id) -->
+    <path d="M 300 140 L 485 140 L 485 900 L 980 900"/>
+
+    <!-- profiles -> educations (1:N) -->
+    <path d="M 820 150 L 980 150"/>
+    <!-- profiles -> projects (1:N) -->
+    <path d="M 820 210 L 900 210 L 900 330 L 980 330"/>
+    <!-- profiles -> certificates (1:N) -->
+    <path d="M 820 250 L 880 250 L 880 515 L 980 515"/>
+    <!-- profiles -> profile_skills (1:N) -->
+    <path d="M 820 290 L 860 290 L 860 695 L 980 695"/>
+    <!-- skills -> profile_skills (1:N) -->
+    <path d="M 1290 735 L 1220 735"/>
+    <!-- profiles -> profile_reviews (1:N) -->
+    <path d="M 670 365 L 670 410"/>
+    <!-- profiles -> shortlists (1:N) -->
+    <path d="M 590 365 L 590 610"/>
+    <!-- profiles -> interview_requests (1:N) -->
+    <path d="M 555 365 L 555 800"/>
+    <!-- companies -> interview_requests (1:N) -->
+    <path d="M 300 500 L 360 500 L 360 895 L 520 895"/>
+    <!-- profiles -> profile_views (1:N) -->
+    <path d="M 790 365 L 790 855 L 980 855"/>
+  </g>
+
+  <!-- Relation Labels -->
+  <text x="410" y="202" font-size="11" font-weight="bold" fill="#2563eb">1 : 1</text>
+  <text x="182" y="370" font-size="11" font-weight="bold" fill="#2563eb">1 : 1</text>
+  <text x="112" y="595" font-size="11" font-weight="bold" fill="#2563eb">1 : N</text>
+  <text x="900" y="142" font-size="11" font-weight="bold" fill="#2563eb">1 : N</text>
+  <text x="935" y="322" font-size="11" font-weight="bold" fill="#2563eb">1 : N</text>
+  <text x="935" y="507" font-size="11" font-weight="bold" fill="#2563eb">1 : N</text>
+  <text x="935" y="687" font-size="11" font-weight="bold" fill="#2563eb">1 : N</text>
+  <text x="682" y="392" font-size="11" font-weight="bold" fill="#2563eb">1 : N</text>
+  <text x="602" y="598" font-size="11" font-weight="bold" fill="#2563eb">1 : N</text>
+  <text x="567" y="790" font-size="11" font-weight="bold" fill="#2563eb">1 : N</text>
+  <text x="895" y="847" font-size="11" font-weight="bold" fill="#2563eb">1 : N</text>
+
+  <!-- ==================== 1. USERS ==================== -->
+  <g transform="translate(40, 90)">
+    <rect width="260" height="240" rx="6" fill="#ffffff" stroke="#1e40af" stroke-width="2"/>
+    <rect width="260" height="32" rx="6" fill="#1e40af"/>
+    <text x="130" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">1. users</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#0369a1">UK</tspan> email : VARCHAR(150)</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a">password_hash : VARCHAR(255)</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a">full_name : VARCHAR(100)</text>
+    <text x="12" y="132" font-size="11" fill="#0f172a">phone : VARCHAR(20)</text>
+    <text x="12" y="152" font-size="11" fill="#0f172a">role : ENUM(CANDIDATE, RECRUITER, ADMIN)</text>
+    <text x="12" y="172" font-size="11" fill="#0f172a">is_locked : BOOLEAN (default false)</text>
+    <text x="12" y="192" font-size="11" fill="#0f172a">locked_reason : VARCHAR(255)</text>
+    <text x="12" y="212" font-size="11" fill="#64748b">created_at, updated_at : DATETIME</text>
+  </g>
+
+  <!-- ==================== 8. COMPANIES ==================== -->
+  <g transform="translate(40, 400)">
+    <rect width="260" height="190" rx="6" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <rect width="260" height="32" rx="6" fill="#7c3aed"/>
+    <text x="130" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">8. companies</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK,UK</tspan> user_id : BIGINT → users.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a">company_name : VARCHAR(150)</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a">tax_code : VARCHAR(50)</text>
+    <text x="12" y="132" font-size="11" fill="#0f172a">website, logo_url : VARCHAR(255)</text>
+    <text x="12" y="152" font-size="11" fill="#0f172a">company_size, address : VARCHAR</text>
+    <text x="12" y="172" font-size="11" fill="#64748b">description : TEXT | created_at</text>
+  </g>
+
+  <!-- ==================== 12. NOTIFICATIONS ==================== -->
+  <g transform="translate(40, 630)">
+    <rect width="260" height="190" rx="6" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+    <rect width="260" height="32" rx="6" fill="#475569"/>
+    <text x="130" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">12. notifications</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> recipient_id : BIGINT → users.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a">type : ENUM(PROFILE_REVIEW,...)</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a">title : VARCHAR(200)</text>
+    <text x="12" y="132" font-size="11" fill="#0f172a">content : TEXT</text>
+    <text x="12" y="152" font-size="11" fill="#0f172a">reference_url : VARCHAR(255)</text>
+    <text x="12" y="172" font-size="11" fill="#0f172a">is_read : BOOLEAN | created_at</text>
+  </g>
+
+  <!-- ==================== 2. PROFILES ==================== -->
+  <g transform="translate(520, 90)">
+    <rect width="300" height="275" rx="6" fill="#ffffff" stroke="#0284c7" stroke-width="2"/>
+    <rect width="300" height="32" rx="6" fill="#0284c7"/>
+    <text x="150" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">2. profiles</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK,UK</tspan> user_id : BIGINT → users.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a">headline : VARCHAR(150)</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a">bio : TEXT</text>
+    <text x="12" y="132" font-size="11" fill="#0f172a">years_of_experience : INT</text>
+    <text x="12" y="152" font-size="11" fill="#0f172a">location : VARCHAR(100)</text>
+    <text x="12" y="172" font-size="11" fill="#0f172a">expected_salary : DECIMAL(12,2)</text>
+    <text x="12" y="192" font-size="11" fill="#0f172a">cv_url, avatar_url : VARCHAR(255)</text>
+    <text x="12" y="212" font-size="11" fill="#0f172a">is_open_to_work : BOOLEAN</text>
+    <text x="12" y="232" font-size="11" fill="#0f172a">approval_status : ENUM(DRAFT, PENDING,</text>
+    <text x="24" y="248" font-size="11" fill="#0f172a">APPROVED, REJECTED)</text>
+    <text x="12" y="264" font-size="11" fill="#64748b">submitted_at, approved_at, updated_at</text>
+  </g>
+
+  <!-- ==================== 11. PROFILE_REVIEWS ==================== -->
+  <g transform="translate(520, 410)">
+    <rect width="300" height="165" rx="6" fill="#ffffff" stroke="#d97706" stroke-width="2"/>
+    <rect width="300" height="32" rx="6" fill="#d97706"/>
+    <text x="150" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">11. profile_reviews (Lịch sử duyệt)</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> profile_id : BIGINT → profiles.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> reviewer_id : BIGINT → users.id</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a">decision : ENUM(APPROVED, REJECTED)</text>
+    <text x="12" y="132" font-size="11" fill="#0f172a">rejection_reason : TEXT</text>
+    <text x="12" y="152" font-size="11" fill="#64748b">reviewed_at : DATETIME</text>
+  </g>
+
+  <!-- ==================== 9. SHORTLISTS ==================== -->
+  <g transform="translate(520, 610)">
+    <rect width="300" height="150" rx="6" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <rect width="300" height="32" rx="6" fill="#7c3aed"/>
+    <text x="150" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">9. shortlists</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> recruiter_id : BIGINT → users.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> profile_id : BIGINT → profiles.id</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a">note : VARCHAR(255)</text>
+    <text x="12" y="132" font-size="11" fill="#64748b"><tspan font-weight="bold" fill="#0369a1">UK</tspan>(recruiter_id, profile_id) | created_at</text>
+  </g>
+
+  <!-- ==================== 10. INTERVIEW_REQUESTS ==================== -->
+  <g transform="translate(520, 800)">
+    <rect width="300" height="190" rx="6" fill="#ffffff" stroke="#be123c" stroke-width="2"/>
+    <rect width="300" height="32" rx="6" fill="#be123c"/>
+    <text x="150" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">10. interview_requests</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> recruiter_id : BIGINT → users.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> company_id : BIGINT → companies.id</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> profile_id : BIGINT → profiles.id</text>
+    <text x="12" y="132" font-size="11" fill="#0f172a">job_title : VARCHAR(150) | scheduled_at</text>
+    <text x="12" y="152" font-size="11" fill="#0f172a">mode : ENUM(ONLINE, OFFLINE) | meeting_link</text>
+    <text x="12" y="172" font-size="11" fill="#0f172a">status : ENUM(PENDING, ACCEPTED, DECLINED, CANCELLED)</text>
+  </g>
+
+  <!-- ==================== 3. EDUCATIONS ==================== -->
+  <g transform="translate(980, 90)">
+    <rect width="380" height="150" rx="6" fill="#ffffff" stroke="#0d9488" stroke-width="2"/>
+    <rect width="380" height="32" rx="6" fill="#0d9488"/>
+    <text x="190" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">3. educations</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> profile_id : BIGINT → profiles.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a">school_name : VARCHAR(150) | degree : VARCHAR(100)</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a">major : VARCHAR(150) | gpa : DECIMAL(3,2)</text>
+    <text x="12" y="132" font-size="11" fill="#64748b">start_date, end_date : DATE | description : TEXT</text>
+  </g>
+
+  <!-- ==================== 6. PROJECTS ==================== -->
+  <g transform="translate(980, 265)">
+    <rect width="380" height="150" rx="6" fill="#ffffff" stroke="#0d9488" stroke-width="2"/>
+    <rect width="380" height="32" rx="6" fill="#0d9488"/>
+    <text x="190" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">6. projects</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> profile_id : BIGINT → profiles.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a">project_name : VARCHAR(150) | role_in_project : VARCHAR(100)</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a">tech_stack : VARCHAR(255) | project_url : VARCHAR(255)</text>
+    <text x="12" y="132" font-size="11" fill="#64748b">start_date, end_date : DATE | description : TEXT</text>
+  </g>
+
+  <!-- ==================== 7. CERTIFICATES ==================== -->
+  <g transform="translate(980, 440)">
+    <rect width="380" height="150" rx="6" fill="#ffffff" stroke="#0d9488" stroke-width="2"/>
+    <rect width="380" height="32" rx="6" fill="#0d9488"/>
+    <text x="190" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">7. certificates</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> profile_id : BIGINT → profiles.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a">certificate_name : VARCHAR(150)</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a">issuing_organization : VARCHAR(150)</text>
+    <text x="12" y="132" font-size="11" fill="#64748b">issue_date, expiry_date : DATE | credential_url</text>
+  </g>
+
+  <!-- ==================== 5. PROFILE_SKILLS (MỨC 1-5) ==================== -->
+  <g transform="translate(980, 620)">
+    <rect width="240" height="165" rx="6" fill="#ffffff" stroke="#16a34a" stroke-width="2"/>
+    <rect width="240" height="32" rx="6" fill="#16a34a"/>
+    <text x="120" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">5. profile_skills</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> profile_id : BIGINT → profiles.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> skill_id : BIGINT → skills.id</text>
+    <text x="12" y="112" font-size="11" font-weight="bold" fill="#15803d">proficiency_level : TINYINT (1..5)</text>
+    <text x="12" y="132" font-size="11" fill="#0f172a">years_used : DECIMAL(3,1)</text>
+    <text x="12" y="152" font-size="11" fill="#64748b"><tspan font-weight="bold" fill="#0369a1">UK</tspan>(profile_id, skill_id)</text>
+  </g>
+
+  <!-- ==================== 4. SKILLS ==================== -->
+  <g transform="translate(1240, 620)">
+    <rect width="140" height="165" rx="6" fill="#ffffff" stroke="#15803d" stroke-width="2"/>
+    <rect width="140" height="32" rx="6" fill="#15803d"/>
+    <text x="70" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">4. skills</text>
+    <text x="10" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="10" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#0369a1">UK</tspan> name : VARCHAR</text>
+    <text x="10" y="92" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#0369a1">UK</tspan> slug : VARCHAR</text>
+    <text x="10" y="112" font-size="11" fill="#0f172a">category : VARCHAR</text>
+    <text x="10" y="132" font-size="11" fill="#64748b">created_at</text>
+  </g>
+
+  <!-- ==================== 13. PROFILE_VIEWS ==================== -->
+  <g transform="translate(980, 815)">
+    <rect width="380" height="150" rx="6" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+    <rect width="380" height="32" rx="6" fill="#475569"/>
+    <text x="190" y="21" font-size="13" font-weight="bold" fill="#ffffff" text-anchor="middle">13. profile_views</text>
+    <text x="12" y="52" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#b45309">PK</tspan> id : BIGINT</text>
+    <text x="12" y="72" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> profile_id : BIGINT → profiles.id</text>
+    <text x="12" y="92" font-size="11" fill="#0f172a"><tspan font-weight="bold" fill="#15803d">FK</tspan> viewer_id : BIGINT (NULLABLE) → users.id</text>
+    <text x="12" y="112" font-size="11" fill="#0f172a">ip_address : VARCHAR(45) | user_agent : VARCHAR(255)</text>
+    <text x="12" y="132" font-size="11" fill="#64748b">viewed_at : DATETIME</text>
+  </g>
+</svg>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="vi"
+      xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(pageTitle, content)">
+<head th:replace="~{fragments/head :: head(${pageTitle})}">
+    <title>TalentLink</title>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+    <!-- Header dùng chung (Logo, Menu theo vai trò, Tên người dùng, Đăng xuất) -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Vùng thông báo dùng chung (Flash Messages / Alerts) -->
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <!-- Nội dung chính của từng trang kế thừa -->
+    <main class="flex-grow-1 py-4">
+        <div th:replace="${content}"></div>
+    </main>
+
+    <!-- Footer dùng chung -->
+    <div th:replace="~{fragments/footer :: footer}"></div>
+
+</body>
+</html>
