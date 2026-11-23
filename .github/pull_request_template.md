@@ -3,8 +3,9 @@
 - 
 
 ## 2. Thông tin Task & Nhánh (Task & Branch Info)
-- **Nhánh hiện tại:** `feature/<tên-task>`
-- **Nhánh đích:** `develop` / `main`
+- **Mã Task:** `T4E7A99` *(Thay bằng mã task tương ứng)*
+- **Nhánh hiện tại:** `feature/<ma-task>-<ten-task>`
+- **Nhánh đích:** `main` / `develop`
 - **Issue / Task liên quan:** #
 
 ## 3. Loại thay đổi (Type of Change)
