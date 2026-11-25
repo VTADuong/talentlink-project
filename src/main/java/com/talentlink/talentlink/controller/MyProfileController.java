@@ -10,6 +10,7 @@ import com.talentlink.talentlink.entity.Profile;
 import com.talentlink.talentlink.entity.Project;
 import com.talentlink.talentlink.entity.Skill;
 import com.talentlink.talentlink.entity.User;
+import com.talentlink.talentlink.service.AvatarService;
 import com.talentlink.talentlink.service.CertificateService;
 import com.talentlink.talentlink.service.EducationService;
 import com.talentlink.talentlink.service.MyProfileService;
@@ -28,13 +29,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * Controller quản lý Hồ sơ của tôi (/me/profile), Học vấn (/me/educations/**),
- * Kỹ năng của tôi (/me/skills/**), Dự án cá nhân (/me/projects/**)
+ * Controller quản lý Hồ sơ của tôi (/me/profile), Ảnh đại diện (/me/profile/avatar),
+ * Học vấn (/me/educations/**), Kỹ năng của tôi (/me/skills/**), Dự án cá nhân (/me/projects/**)
  * và Chứng chỉ & File minh chứng (/me/certificates/**)
- * (Task T4E7AA3, T4E7AA4, T4E7AA6, T4E7AA7, T4E7AA8).
+ * (Task T4E7AA3, T4E7AA4, T4E7AA6, T4E7AA7, T4E7AA8, T4E7AA9).
  */
 @Controller
 @RequestMapping("/me")
@@ -45,18 +48,21 @@ public class MyProfileController {
     private final MySkillService mySkillService;
     private final ProjectService projectService;
     private final CertificateService certificateService;
+    private final AvatarService avatarService;
 
     public MyProfileController(
             MyProfileService myProfileService,
             EducationService educationService,
             MySkillService mySkillService,
             ProjectService projectService,
-            CertificateService certificateService) {
+            CertificateService certificateService,
+            AvatarService avatarService) {
         this.myProfileService = myProfileService;
         this.educationService = educationService;
         this.mySkillService = mySkillService;
         this.projectService = projectService;
         this.certificateService = certificateService;
+        this.avatarService = avatarService;
     }
 
     @GetMapping("/profile")
@@ -94,6 +100,45 @@ public class MyProfileController {
         myProfileService.updateMyProfile(currentEmail, profileDto);
         FlashMessageHelper.addSuccess(redirectAttributes,
                 "Cập nhật thông tin Hồ sơ của tôi thành công!");
+        return "redirect:/me/profile";
+    }
+
+    // =========================================================================
+    // QUẢN LÝ ẢNH ĐẠI DIỆN TRÊN TRANG HỒ SƠ (Task T4E7AA9)
+    // =========================================================================
+
+    @PostMapping("/profile/avatar")
+    public String uploadAvatar(
+            @RequestParam(value = "avatarFile", required = false) MultipartFile avatarFile,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        String currentEmail = authentication.getName();
+        Optional<String> validationError = avatarService.validateAvatarFile(avatarFile);
+
+        if (validationError.isPresent()) {
+            model.addAttribute("avatarError", validationError.get());
+            populateProfileData(currentEmail, model);
+            ensureDefaultFormDtos(currentEmail, model);
+            return "me/profile";
+        }
+
+        avatarService.updateMyAvatar(currentEmail, avatarFile);
+        FlashMessageHelper.addSuccess(redirectAttributes,
+                "Đã tải lên và lưu ảnh đại diện mới thành công (ảnh cũ đã được xóa tự động)!");
+        return "redirect:/me/profile";
+    }
+
+    @PostMapping("/profile/avatar/delete")
+    public String deleteAvatar(
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+        String currentEmail = authentication.getName();
+        avatarService.deleteMyAvatar(currentEmail);
+        FlashMessageHelper.addSuccess(redirectAttributes,
+                "Đã xóa ảnh đại diện cũ và chuyển về ảnh mặc định theo chữ cái đầu tên!");
         return "redirect:/me/profile";
     }
 
@@ -393,6 +438,8 @@ public class MyProfileController {
 
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("myProfile", myProfile);
+        model.addAttribute("avatarInitial",
+                avatarService.extractInitialFromName(currentUser != null ? currentUser.getFullName() : null));
         model.addAttribute("educations", educationService.listMyEducations(currentEmail));
         model.addAttribute("groupedSkills", mySkillService.getMySkillsGroupedByCategory(currentEmail));
         model.addAttribute("availableSkills", mySkillService.listAvailableCatalogSkills());

@@ -58,15 +58,43 @@
     </div>
 
     <div class="row g-4">
-        <!-- Cột trái: Xem thông tin Hồ sơ & Kỹ năng theo nhóm -->
+        <!-- Cột trái: Xem thông tin Hồ sơ, Ảnh đại diện (Task T4E7AA9) & Kỹ năng theo nhóm -->
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-4">
                     <div class="text-center mb-3">
-                        <div class="d-inline-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-circle mb-2"
-                             style="width: 72px; height: 72px;">
-                            <i class="bi bi-person-badge-fill fs-1"></i>
+                        <!-- Khung Ảnh đại diện hoặc Ảnh mặc định theo chữ cái đầu tên (Task T4E7AA9) -->
+                        <div class="position-relative d-inline-block mb-2"
+                             id="avatarContainer"
+                             th:attr="data-saved-avatar=${myProfile != null and myProfile.avatarUrl != null ? myProfile.avatarUrl : ''}">
+
+                            <!-- Ảnh đại diện thật hoặc ảnh xem trước bằng JavaScript thuần -->
+                            <img id="avatarPreviewImg"
+                                 th:src="${myProfile != null and myProfile.avatarUrl != null and !#strings.isEmpty(myProfile.avatarUrl)} ? @{${myProfile.avatarUrl}} : ''"
+                                 th:classappend="${myProfile == null or myProfile.avatarUrl == null or #strings.isEmpty(myProfile.avatarUrl)} ? 'd-none' : ''"
+                                 alt="Ảnh đại diện sinh viên"
+                                 class="rounded-circle border border-3 border-primary-subtle shadow-sm"
+                                 style="width: 96px; height: 96px; object-fit: cover;"
+                                 onerror="handleAvatarLoadError(this)"/>
+
+                            <!-- Ảnh mặc định theo chữ cái đầu tên khi chưa có ảnh đại diện -->
+                            <div id="avatarInitialBadge"
+                                 th:classappend="${myProfile != null and myProfile.avatarUrl != null and !#strings.isEmpty(myProfile.avatarUrl)} ? 'd-none' : 'd-inline-flex'"
+                                 class="align-items-center justify-content-center rounded-circle bg-primary text-white fw-bold shadow-sm border border-3 border-primary-subtle"
+                                 style="width: 96px; height: 96px; font-size: 2.25rem; user-select: none;"
+                                 th:title="${'Ảnh mặc định theo chữ cái đầu tên: ' + (currentUser != null ? currentUser.fullName : 'Sinh viên')}"
+                                 th:text="${avatarInitial != null ? avatarInitial : 'S'}">
+                                D
+                            </div>
                         </div>
+
+                        <!-- Nhãn báo đang xem trước ảnh bằng JavaScript thuần (trước khi bấm Lưu) -->
+                        <div id="avatarPreviewNotice" class="d-none mb-2">
+                            <span class="badge bg-warning text-dark">
+                                <i class="bi bi-eye-fill me-1"></i>Xem trước ảnh mới (chưa lưu)
+                            </span>
+                        </div>
+
                         <h5 class="fw-bold text-dark mb-1"
                             th:text="${currentUser != null ? currentUser.fullName : 'Sinh viên'}">
                             Sinh Viên Demo
@@ -84,6 +112,74 @@
                                   th:if="${myProfile != null and myProfile.openToWork and myProfile.visibility != 'PRIVATE'}">
                                 <i class="bi bi-globe me-1"></i>Chế độ: Công khai
                             </span>
+                        </div>
+
+                        <!-- Form Tải / Thay Ảnh đại diện (JPG/PNG tối đa 2MB, xem trước JS thuần) -->
+                        <div class="mt-3 pt-3 border-top text-start">
+                            <div class="fw-semibold small text-dark mb-1">
+                                <i class="bi bi-camera-fill text-primary me-1"></i>Ảnh đại diện (JPG/PNG, tối đa 2MB)
+                            </div>
+
+                            <!-- Lỗi validate từ Server -->
+                            <div th:if="${avatarError != null}"
+                                 class="alert alert-danger py-2 px-2 small mb-2"
+                                 th:text="${avatarError}">
+                                Lỗi tải ảnh đại diện
+                            </div>
+
+                            <!-- Lỗi validate ngay trên trình duyệt bằng JavaScript thuần -->
+                            <div id="avatarClientError"
+                                 class="alert alert-danger py-2 px-2 small mb-2 d-none">
+                            </div>
+
+                            <form th:action="@{/me/profile/avatar}"
+                                  method="post"
+                                  enctype="multipart/form-data"
+                                  id="avatarUploadForm"
+                                  novalidate>
+                                <input type="hidden" th:if="${_csrf != null}"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}"/>
+
+                                <input type="file"
+                                       id="avatarFileInput"
+                                       name="avatarFile"
+                                       accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+                                       class="form-control form-control-sm mb-2"
+                                       onchange="previewAvatarBeforeSave(this)"/>
+
+                                <div class="form-text small mb-2">
+                                    Chọn ảnh <code>.jpg</code> / <code>.png</code> (&le; 2MB) để xem trước ngay trên trang. Khi lưu ảnh mới sẽ tự động xóa ảnh cũ.
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <button type="submit"
+                                            id="saveAvatarBtn"
+                                            class="btn btn-primary btn-sm flex-grow-1 fw-semibold">
+                                        <i class="bi bi-cloud-upload me-1"></i>Lưu ảnh đại diện
+                                    </button>
+                                    <button type="button"
+                                            id="cancelAvatarPreviewBtn"
+                                            class="btn btn-outline-secondary btn-sm d-none"
+                                            onclick="cancelAvatarPreview()">
+                                        Hủy chọn
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Nút xóa ảnh đại diện hiện tại để quay về ảnh mặc định theo chữ cái đầu tên -->
+                            <form th:if="${myProfile != null and myProfile.avatarUrl != null and !#strings.isEmpty(myProfile.avatarUrl)}"
+                                  th:action="@{/me/profile/avatar/delete}"
+                                  method="post"
+                                  class="mt-2"
+                                  onsubmit="return confirm('Bạn có muốn xóa ảnh đại diện hiện tại và quay về ảnh mặc định theo chữ cái đầu tên không?');">
+                                <input type="hidden" th:if="${_csrf != null}"
+                                       th:name="${_csrf.parameterName}"
+                                       th:value="${_csrf.token}"/>
+                                <button type="submit" class="btn btn-outline-danger btn-sm w-100">
+                                    <i class="bi bi-trash3 me-1"></i>Xóa ảnh hiện tại (về chữ cái đầu tên)
+                                </button>
+                            </form>
                         </div>
                     </div>
 
@@ -984,6 +1080,140 @@
         });
         if (keyword !== '' && firstMatchValue !== null) {
             select.value = firstMatchValue;
+        }
+    }
+
+    // =========================================================================
+    // XEM TRƯỚC ẢNH ĐẠI DIỆN TRÊN TRANG TRƯỚC KHI LƯU BẰNG JAVASCRIPT THUẦN (Task T4E7AA9)
+    // =========================================================================
+    const MAX_AVATAR_BYTES = 2 * 1024 * 1024; // 2MB
+    const ALLOWED_AVATAR_EXTENSIONS = ['jpg', 'jpeg', 'png'];
+    const ALLOWED_AVATAR_MIMES = ['image/jpeg', 'image/jpg', 'image/png'];
+
+    function previewAvatarBeforeSave(fileInput) {
+        const errorBox = document.getElementById('avatarClientError');
+        const previewImg = document.getElementById('avatarPreviewImg');
+        const initialBadge = document.getElementById('avatarInitialBadge');
+        const previewNotice = document.getElementById('avatarPreviewNotice');
+        const cancelBtn = document.getElementById('cancelAvatarPreviewBtn');
+
+        if (errorBox) {
+            errorBox.classList.add('d-none');
+            errorBox.textContent = '';
+        }
+
+        if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+            restoreSavedAvatarState();
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const fileName = (file.name || '').toLowerCase();
+        const dotIdx = fileName.lastIndexOf('.');
+        const ext = dotIdx >= 0 ? fileName.substring(dotIdx + 1) : '';
+        const mimeType = (file.type || '').toLowerCase();
+
+        if (!ALLOWED_AVATAR_EXTENSIONS.includes(ext) || !ALLOWED_AVATAR_MIMES.includes(mimeType)) {
+            showAvatarClientError('Định dạng ảnh không hợp lệ! Chỉ chấp nhận ảnh JPG (.jpg, .jpeg) hoặc PNG (.png).');
+            fileInput.value = '';
+            restoreSavedAvatarState();
+            return;
+        }
+
+        if (file.size > MAX_AVATAR_BYTES) {
+            const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+            showAvatarClientError('Dung lượng ảnh (' + sizeMb + ' MB) vượt quá giới hạn tối đa 2MB!');
+            fileInput.value = '';
+            restoreSavedAvatarState();
+            return;
+        }
+
+        // Sử dụng FileReader (JavaScript thuần) để đọc và hiển thị ảnh xem trước ngay trên trang trước khi lưu
+        const reader = new FileReader();
+        reader.onload = function (event) {
+            if (previewImg) {
+                previewImg.src = event.target.result;
+                previewImg.classList.remove('d-none');
+            }
+            if (initialBadge) {
+                initialBadge.classList.remove('d-inline-flex');
+                initialBadge.classList.add('d-none');
+            }
+            if (previewNotice) {
+                previewNotice.classList.remove('d-none');
+            }
+            if (cancelBtn) {
+                cancelBtn.classList.remove('d-none');
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function cancelAvatarPreview() {
+        const fileInput = document.getElementById('avatarFileInput');
+        const errorBox = document.getElementById('avatarClientError');
+        if (fileInput) {
+            fileInput.value = '';
+        }
+        if (errorBox) {
+            errorBox.classList.add('d-none');
+            errorBox.textContent = '';
+        }
+        restoreSavedAvatarState();
+    }
+
+    function restoreSavedAvatarState() {
+        const container = document.getElementById('avatarContainer');
+        const previewImg = document.getElementById('avatarPreviewImg');
+        const initialBadge = document.getElementById('avatarInitialBadge');
+        const previewNotice = document.getElementById('avatarPreviewNotice');
+        const cancelBtn = document.getElementById('cancelAvatarPreviewBtn');
+        const savedAvatarUrl = container ? (container.getAttribute('data-saved-avatar') || '') : '';
+
+        if (previewNotice) {
+            previewNotice.classList.add('d-none');
+        }
+        if (cancelBtn) {
+            cancelBtn.classList.add('d-none');
+        }
+
+        if (savedAvatarUrl !== '') {
+            if (previewImg) {
+                previewImg.src = savedAvatarUrl;
+                previewImg.classList.remove('d-none');
+            }
+            if (initialBadge) {
+                initialBadge.classList.remove('d-inline-flex');
+                initialBadge.classList.add('d-none');
+            }
+        } else {
+            if (previewImg) {
+                previewImg.removeAttribute('src');
+                previewImg.classList.add('d-none');
+            }
+            if (initialBadge) {
+                initialBadge.classList.remove('d-none');
+                initialBadge.classList.add('d-inline-flex');
+            }
+        }
+    }
+
+    function handleAvatarLoadError(imgElement) {
+        if (imgElement) {
+            imgElement.classList.add('d-none');
+        }
+        const initialBadge = document.getElementById('avatarInitialBadge');
+        if (initialBadge) {
+            initialBadge.classList.remove('d-none');
+            initialBadge.classList.add('d-inline-flex');
+        }
+    }
+
+    function showAvatarClientError(message) {
+        const errorBox = document.getElementById('avatarClientError');
+        if (errorBox) {
+            errorBox.textContent = message;
+            errorBox.classList.remove('d-none');
         }
     }
 </script>
