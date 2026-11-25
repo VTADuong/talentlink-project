@@ -113,7 +113,7 @@ public class SecurityConfig {
 
                 // 2. Phân quyền URL theo đúng yêu cầu
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/register", "/flash/**", "/error/**", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/", "/login", "/register", "/forgot-password", "/reset-password", "/flash/**", "/error/**", "/css/**", "/js/**", "/images/**", "/favicon.ico").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/partner/**").hasRole("PARTNER")
                         .requestMatchers("/me/**").hasRole("STUDENT")
