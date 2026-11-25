@@ -1,8 +1,14 @@
 package com.talentlink.talentlink.config;
 
+import com.talentlink.talentlink.entity.Education;
+import com.talentlink.talentlink.entity.Profile;
 import com.talentlink.talentlink.entity.User;
+import com.talentlink.talentlink.repository.EducationRepository;
+import com.talentlink.talentlink.repository.ProfileRepository;
 import com.talentlink.talentlink.repository.UserRepository;
 import com.talentlink.talentlink.service.CustomUserDetailsService;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -54,7 +60,11 @@ public class SecurityConfig {
      * trong trường hợp bảng users chưa có dữ liệu khi chạy nhánh độc lập.
      */
     @Bean
-    public CommandLineRunner seedDefaultAuthUsers(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public CommandLineRunner seedDefaultAuthUsers(
+            UserRepository userRepository,
+            ProfileRepository profileRepository,
+            EducationRepository educationRepository,
+            PasswordEncoder passwordEncoder) {
         return args -> {
             if (userRepository.count() == 0) {
                 String defaultHash = passwordEncoder.encode("123456aA@");
@@ -82,10 +92,21 @@ public class SecurityConfig {
                 student.setEmail("student01@talentlink.demo");
                 student.setPasswordHash(defaultHash);
                 student.setFullName("Sinh Viên Demo 01");
+                student.setPhone("0901234501");
                 student.setRole("STUDENT");
                 student.setLocked(false);
                 student.setCreatedAt(now);
                 student.setUpdatedAt(now);
+
+                User student2 = new User();
+                student2.setEmail("student02@talentlink.demo");
+                student2.setPasswordHash(defaultHash);
+                student2.setFullName("Sinh Viên Demo 02");
+                student2.setPhone("0901234502");
+                student2.setRole("STUDENT");
+                student2.setLocked(false);
+                student2.setCreatedAt(now);
+                student2.setUpdatedAt(now);
 
                 User lockedUser = new User();
                 lockedUser.setEmail("locked@talentlink.demo");
@@ -99,8 +120,60 @@ public class SecurityConfig {
 
                 userRepository.save(admin);
                 userRepository.save(partner);
-                userRepository.save(student);
+                User savedStudent1 = userRepository.save(student);
+                User savedStudent2 = userRepository.save(student2);
                 userRepository.save(lockedUser);
+
+                // Tạo sẵn hồ sơ và học vấn mẫu cho student01 (id=1) và student02 (id=2) để test chặn 403 khi đổi id trên URL
+                Profile p1 = new Profile();
+                p1.setUserId(savedStudent1.getId());
+                p1.setHeadline("Java Backend Fresher");
+                p1.setLocation("Hà Nội");
+                p1.setBio("Sinh viên năm cuối chuyên ngành Kỹ thuật Phần mềm.");
+                p1.setDateOfBirth(LocalDate.of(2004, 5, 15));
+                p1.setOpenToWork(false);
+                p1.setVisibility("PRIVATE");
+                p1.setApprovalStatus("DRAFT");
+                p1.setCreatedAt(now);
+                p1.setUpdatedAt(now);
+                Profile savedP1 = profileRepository.save(p1);
+
+                Education edu1 = new Education();
+                edu1.setProfileId(savedP1.getId());
+                edu1.setSchoolName("Đại học Công Nghệ Giả Lập Hà Nội");
+                edu1.setMajor("Kỹ thuật Phần mềm");
+                edu1.setDegree("Kỹ sư");
+                edu1.setStartDate(LocalDate.of(2022, 9, 1));
+                edu1.setEndDate(LocalDate.of(2026, 6, 30));
+                edu1.setGpa(new BigDecimal("3.45"));
+                edu1.setDescription("Đạt học bổng khuyến khích học tập.");
+                edu1.setCreatedAt(now);
+                educationRepository.save(edu1);
+
+                Profile p2 = new Profile();
+                p2.setUserId(savedStudent2.getId());
+                p2.setHeadline("Frontend React Developer");
+                p2.setLocation("TP. Hồ Chí Minh");
+                p2.setBio("Sinh viên chuyên ngành Khoa học Máy tính.");
+                p2.setDateOfBirth(LocalDate.of(2004, 8, 20));
+                p2.setOpenToWork(false);
+                p2.setVisibility("PRIVATE");
+                p2.setApprovalStatus("DRAFT");
+                p2.setCreatedAt(now);
+                p2.setUpdatedAt(now);
+                Profile savedP2 = profileRepository.save(p2);
+
+                Education edu2 = new Education();
+                edu2.setProfileId(savedP2.getId());
+                edu2.setSchoolName("Đại học Kỹ Thuật Số TP.HCM (Demo)");
+                edu2.setMajor("Khoa học Máy tính");
+                edu2.setDegree("Cử nhân");
+                edu2.setStartDate(LocalDate.of(2022, 9, 1));
+                edu2.setEndDate(LocalDate.of(2026, 6, 30));
+                edu2.setGpa(new BigDecimal("3.60"));
+                edu2.setDescription("Học vấn của Sinh viên 02 (dùng để kiểm thử chặn 403 khi Sinh viên 01 đổi ID trên URL).");
+                edu2.setCreatedAt(now);
+                educationRepository.save(edu2);
             }
         };
     }
