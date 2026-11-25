@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký tài khoản Sinh viên — TalentLink</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/}">
+            <i class="bi bi-briefcase-fill text-primary me-2"></i>TalentLink
+        </a>
+        <div class="d-flex gap-2">
+            <a class="btn btn-outline-light btn-sm" th:href="@{/login}">Đăng nhập</a>
+        </div>
+    </div>
+</nav>
+
+<main class="container py-5 flex-grow-1">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="card border-0 shadow-sm p-4">
+                <div class="text-center mb-4">
+                    <span class="badge bg-primary-subtle text-primary mb-2 px-3 py-1 rounded-pill">
+                        Dành cho Sinh viên / Ứng viên
+                    </span>
+                    <h3 class="fw-bold text-dark mb-1">Đăng ký Sinh viên</h3>
+                    <p class="text-muted small mb-0">
+                        Sau khi đăng ký, hệ thống sẽ tự động tạo hồ sơ trống ở trạng thái <strong>Riêng tư</strong>
+                    </p>
+                </div>
+
+                <!-- Form Đăng ký Sinh viên có bật CSRF, Bean Validation + Custom Validator -->
+                <form th:action="@{/register}" th:object="${registerDto}" method="post" novalidate>
+                    <input type="hidden" th:if="${_csrf != null}"
+                           th:name="${_csrf.parameterName}"
+                           th:value="${_csrf.token}"/>
+
+                    <!-- 1. Họ và tên -->
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label fw-semibold">
+                            Họ và tên <span class="text-danger">*</span>
+                        </label>
+                        <input type="text"
+                               id="fullName"
+                               th:field="*{fullName}"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('fullName')} ? 'is-invalid' : ''"
+                               placeholder="Nhập họ và tên đầy đủ">
+                        <div class="invalid-feedback"
+                             th:if="${#fields.hasErrors('fullName')}"
+                             th:errors="*{fullName}">
+                            Lỗi họ và tên
+                        </div>
+                    </div>
+
+                    <!-- 2. Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label fw-semibold">
+                            Email <span class="text-danger">*</span>
+                        </label>
+                        <input type="email"
+                               id="email"
+                               th:field="*{email}"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                               placeholder="sinhvien@talentlink.demo">
+                        <div class="invalid-feedback"
+                             th:if="${#fields.hasErrors('email')}"
+                             th:errors="*{email}">
+                            Lỗi email
+                        </div>
+                    </div>
+
+                    <!-- 3. Mật khẩu -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label fw-semibold">
+                            Mật khẩu <span class="text-danger">*</span>
+                        </label>
+                        <input type="password"
+                               id="password"
+                               th:field="*{password}"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('password')} ? 'is-invalid' : ''"
+                               placeholder="Tối thiểu 8 ký tự">
+                        <div class="invalid-feedback"
+                             th:if="${#fields.hasErrors('password')}"
+                             th:errors="*{password}">
+                            Lỗi mật khẩu
+                        </div>
+                    </div>
+
+                    <!-- 4. Nhập lại mật khẩu -->
+                    <div class="mb-4">
+                        <label for="confirmPassword" class="form-label fw-semibold">
+                            Nhập lại mật khẩu <span class="text-danger">*</span>
+                        </label>
+                        <input type="password"
+                               id="confirmPassword"
+                               th:field="*{confirmPassword}"
+                               class="form-control"
+                               th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid' : ''"
+                               placeholder="Nhập lại đúng mật khẩu ở trên">
+                        <div class="invalid-feedback"
+                             th:if="${#fields.hasErrors('confirmPassword')}"
+                             th:errors="*{confirmPassword}">
+                            Mật khẩu nhập lại không khớp
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+                        <i class="bi bi-person-plus-fill me-1"></i>Đăng ký tài khoản
+                    </button>
+                </form>
+
+                <hr class="my-4">
+                <div class="text-center small">
+                    Đã có tài khoản?
+                    <a th:href="@{/login}" class="fw-semibold text-decoration-none">Đăng nhập ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
+    &copy; 2026 TalentLink • Student Registration &amp; Automatic Private Profile
+</footer>
+
+</body>
+</html>
