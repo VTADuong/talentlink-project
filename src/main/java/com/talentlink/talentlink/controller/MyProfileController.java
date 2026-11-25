@@ -1,11 +1,14 @@
 package com.talentlink.talentlink.controller;
 
+import com.talentlink.talentlink.dto.AddProfileSkillDto;
 import com.talentlink.talentlink.dto.EducationDto;
 import com.talentlink.talentlink.dto.MyProfileUpdateDto;
 import com.talentlink.talentlink.entity.Profile;
+import com.talentlink.talentlink.entity.Skill;
 import com.talentlink.talentlink.entity.User;
 import com.talentlink.talentlink.service.EducationService;
 import com.talentlink.talentlink.service.MyProfileService;
+import com.talentlink.talentlink.service.MySkillService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import org.springframework.security.core.Authentication;
@@ -20,8 +23,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * Controller quản lý Hồ sơ của tôi (/me/profile) và Danh sách Học vấn (/me/educations/**)
- * (Task T4E7AA3 & Task T4E7AA4).
+ * Controller quản lý Hồ sơ của tôi (/me/profile), Học vấn (/me/educations/**)
+ * và Kỹ năng của tôi (/me/skills/**) (Task T4E7AA3, T4E7AA4, T4E7AA6).
  */
 @Controller
 @RequestMapping("/me")
@@ -29,22 +32,30 @@ public class MyProfileController {
 
     private final MyProfileService myProfileService;
     private final EducationService educationService;
+    private final MySkillService mySkillService;
 
-    public MyProfileController(MyProfileService myProfileService, EducationService educationService) {
+    public MyProfileController(
+            MyProfileService myProfileService,
+            EducationService educationService,
+            MySkillService mySkillService) {
         this.myProfileService = myProfileService;
         this.educationService = educationService;
+        this.mySkillService = mySkillService;
     }
 
     @GetMapping("/profile")
     public String viewAndEditProfile(Authentication authentication, Model model) {
         String currentEmail = authentication.getName();
-        populateProfileAndEducations(currentEmail, model);
+        populateProfileData(currentEmail, model);
 
         if (!model.containsAttribute("profileDto")) {
             model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
         }
         if (!model.containsAttribute("educationDto")) {
             model.addAttribute("educationDto", new EducationDto());
+        }
+        if (!model.containsAttribute("addSkillDto")) {
+            model.addAttribute("addSkillDto", new AddProfileSkillDto());
         }
         return "me/profile";
     }
@@ -68,8 +79,9 @@ public class MyProfileController {
         }
 
         if (bindingResult.hasErrors()) {
-            populateProfileAndEducations(currentEmail, model);
+            populateProfileData(currentEmail, model);
             model.addAttribute("educationDto", new EducationDto());
+            model.addAttribute("addSkillDto", new AddProfileSkillDto());
             return "me/profile";
         }
 
@@ -83,10 +95,6 @@ public class MyProfileController {
     // QUẢN LÝ HỌC VẤN TRÊN TRANG HỒ SƠ (Task T4E7AA4)
     // =========================================================================
 
-    /**
-     * Mở form sửa một bản ghi học vấn theo ID trên URL.
-     * Nếu ID là học vấn của người khác -> Chặn 403 Forbidden.
-     */
     @GetMapping("/educations/{id}/edit")
     public String editEducationForm(
             @PathVariable("id") Long id,
@@ -96,16 +104,14 @@ public class MyProfileController {
         String currentEmail = authentication.getName();
         EducationDto editDto = educationService.getMyEducationDtoForEdit(id, currentEmail);
 
-        populateProfileAndEducations(currentEmail, model);
+        populateProfileData(currentEmail, model);
         model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
         model.addAttribute("educationDto", editDto);
+        model.addAttribute("addSkillDto", new AddProfileSkillDto());
         model.addAttribute("editingEducation", true);
         return "me/profile";
     }
 
-    /**
-     * Thêm mới học vấn vào hồ sơ của tôi.
-     */
     @PostMapping("/educations")
     public String createEducation(
             @Valid @ModelAttribute("educationDto") EducationDto educationDto,
@@ -118,8 +124,9 @@ public class MyProfileController {
         validateStartAndEndDate(educationDto, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            populateProfileAndEducations(currentEmail, model);
+            populateProfileData(currentEmail, model);
             model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
+            model.addAttribute("addSkillDto", new AddProfileSkillDto());
             return "me/profile";
         }
 
@@ -129,10 +136,6 @@ public class MyProfileController {
         return "redirect:/me/profile";
     }
 
-    /**
-     * Lưu cập nhật học vấn theo ID trên URL.
-     * Nếu đổi ID trên URL sang học vấn của người khác -> Chặn 403 Forbidden.
-     */
     @PostMapping("/educations/{id}")
     public String updateEducation(
             @PathVariable("id") Long id,
@@ -147,10 +150,10 @@ public class MyProfileController {
         validateStartAndEndDate(educationDto, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            // Vẫn kiểm tra quyền sở hữu trước khi render lại form
             educationService.getMyEducationDtoForEdit(id, currentEmail);
-            populateProfileAndEducations(currentEmail, model);
+            populateProfileData(currentEmail, model);
             model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
+            model.addAttribute("addSkillDto", new AddProfileSkillDto());
             model.addAttribute("editingEducation", true);
             return "me/profile";
         }
@@ -161,10 +164,6 @@ public class MyProfileController {
         return "redirect:/me/profile";
     }
 
-    /**
-     * Xóa học vấn theo ID trên URL.
-     * Nếu đổi ID trên URL sang học vấn của người khác -> Chặn 403 Forbidden.
-     */
     @PostMapping("/educations/{id}/delete")
     public String deleteEducation(
             @PathVariable("id") Long id,
@@ -178,6 +177,54 @@ public class MyProfileController {
         return "redirect:/me/profile";
     }
 
+    // =========================================================================
+    // QUẢN LÝ KỸ NĂNG CỦA TÔI TRÊN TRANG HỒ SƠ (Task T4E7AA6)
+    // =========================================================================
+
+    @PostMapping("/skills")
+    public String addSkillToProfile(
+            @Valid @ModelAttribute("addSkillDto") AddProfileSkillDto addSkillDto,
+            BindingResult bindingResult,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        String currentEmail = authentication.getName();
+
+        // Kiểm tra không cho phép chọn trùng kỹ năng
+        if (!bindingResult.hasFieldErrors("skillId")
+                && mySkillService.isDuplicateSkillInProfile(currentEmail, addSkillDto.getSkillId())) {
+            bindingResult.rejectValue("skillId", "skill.duplicate",
+                    "Kỹ năng này đã có trong hồ sơ của bạn. Vui lòng không chọn trùng kỹ năng!");
+        }
+
+        if (bindingResult.hasErrors()) {
+            populateProfileData(currentEmail, model);
+            model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
+            model.addAttribute("educationDto", new EducationDto());
+            return "me/profile";
+        }
+
+        Skill added = mySkillService.addSkillToMyProfile(currentEmail, addSkillDto);
+        FlashMessageHelper.addSuccess(redirectAttributes,
+                String.format("Đã thêm kỹ năng [%s] (Nhóm: %s — Mức %d/5) vào hồ sơ của bạn!",
+                        added.getName(), added.getCategory(), addSkillDto.getProficiencyLevel()));
+        return "redirect:/me/profile";
+    }
+
+    @PostMapping("/skills/{id}/delete")
+    public String removeSkillFromProfile(
+            @PathVariable("id") Long id,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+        String currentEmail = authentication.getName();
+        mySkillService.removeSkillFromMyProfile(id, currentEmail);
+        FlashMessageHelper.addSuccess(redirectAttributes,
+                "Đã bỏ kỹ năng khỏi hồ sơ của bạn thành công!");
+        return "redirect:/me/profile";
+    }
+
     private void validateStartAndEndDate(EducationDto dto, BindingResult bindingResult) {
         if (dto.getStartDate() != null && dto.getEndDate() != null) {
             if (dto.getStartDate().isAfter(dto.getEndDate())) {
@@ -187,11 +234,15 @@ public class MyProfileController {
         }
     }
 
-    private void populateProfileAndEducations(String currentEmail, Model model) {
+    private void populateProfileData(String currentEmail, Model model) {
         User currentUser = myProfileService.getCurrentUser(currentEmail);
         Profile myProfile = myProfileService.getOrCreateMyProfile(currentEmail);
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("myProfile", myProfile);
         model.addAttribute("educations", educationService.listMyEducations(currentEmail));
+        model.addAttribute("groupedSkills", mySkillService.getMySkillsGroupedByCategory(currentEmail));
+        model.addAttribute("availableSkills", mySkillService.listAvailableCatalogSkills());
+        model.addAttribute("selectedSkillIds", mySkillService.getMySelectedSkillIds(currentEmail));
+        model.addAttribute("levelDescriptions", MySkillService.LEVEL_DESCRIPTIONS);
     }
 }
