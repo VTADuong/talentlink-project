@@ -25,13 +25,39 @@
 </nav>
 
 <main class="container py-5 flex-grow-1">
-    <div class="card border-0 shadow-sm p-4">
+    <div class="card border-0 shadow-sm p-4 mb-4">
         <span class="badge bg-info-subtle text-info-emphasis align-self-start mb-2">Khu vực /me/** — Chỉ dành cho STUDENT</span>
         <h2 class="fw-bold">Trang chủ Sinh viên / Hồ sơ của tôi</h2>
-        <p class="text-secondary">
-            Xin chào <strong th:text="${currentUsername}">student01@talentlink.demo</strong>! Bạn đã đăng nhập thành công với vai trò
-            <strong th:text="${roleLabel}">STUDENT</strong> và được chuyển hướng tự động về trang chủ Sinh viên.
+        <p class="text-secondary mb-3">
+            Xin chào <strong th:text="${fullName != null ? fullName : currentUsername}">Sinh Viên</strong>
+            (<span th:text="${currentUsername}">student@talentlink.demo</span>)!
         </p>
+
+        <!-- Thông tin hồ sơ tự động khởi tạo ở trạng thái Riêng tư -->
+        <div th:if="${studentProfile != null}" class="p-3 rounded border bg-white mb-3">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div>
+                    <div class="fw-bold text-dark">
+                        <i class="bi bi-person-vcard me-1 text-primary"></i>
+                        Hồ sơ cá nhân (Mã hồ sơ #<span th:text="${studentProfile.id}">1</span>)
+                    </div>
+                    <div class="small text-muted mt-1">
+                        Hồ sơ trống được tự động tạo khi đăng ký tài khoản sinh viên.
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-secondary px-3 py-2"
+                          th:if="${!studentProfile.openToWork or studentProfile.visibility == 'PRIVATE'}">
+                        <i class="bi bi-eye-slash-fill me-1"></i>Trạng thái: Riêng tư (PRIVATE)
+                    </span>
+                    <span class="badge bg-success px-3 py-2"
+                          th:if="${studentProfile.openToWork and studentProfile.visibility != 'PRIVATE'}">
+                        <i class="bi bi-eye-fill me-1"></i>Trạng thái: Công khai
+                    </span>
+                </div>
+            </div>
+        </div>
+
         <div class="d-flex gap-2 mt-2">
             <a th:href="@{/me/dashboard}" class="btn btn-primary">Quản lý Hồ sơ của tôi</a>
             <a th:href="@{/}" class="btn btn-outline-secondary">Về Trang chủ chung</a>

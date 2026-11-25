@@ -1,5 +1,9 @@
 package com.talentlink.talentlink.controller;
 
+import com.talentlink.talentlink.entity.Profile;
+import com.talentlink.talentlink.repository.ProfileRepository;
+import com.talentlink.talentlink.service.CustomUserPrincipal;
+import java.util.Optional;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +17,12 @@ import org.springframework.web.bind.annotation.GetMapping;
  */
 @Controller
 public class RoleHomeController {
+
+    private final ProfileRepository profileRepository;
+
+    public RoleHomeController(ProfileRepository profileRepository) {
+        this.profileRepository = profileRepository;
+    }
 
     @GetMapping({"/admin", "/admin/dashboard"})
     public String adminHome(Authentication authentication, Model model) {
@@ -32,6 +42,13 @@ public class RoleHomeController {
     public String studentHome(Authentication authentication, Model model) {
         model.addAttribute("currentUsername", authentication != null ? authentication.getName() : "student01@talentlink.demo");
         model.addAttribute("roleLabel", "STUDENT (Sinh viên / Ứng viên)");
+
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserPrincipal principal) {
+            model.addAttribute("fullName", principal.getFullName());
+            Optional<Profile> profileOpt = profileRepository.findByUserId(principal.getId());
+            profileOpt.ifPresent(profile -> model.addAttribute("studentProfile", profile));
+        }
+
         return "dashboard/student-home";
     }
 }

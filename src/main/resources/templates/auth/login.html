@@ -46,6 +46,12 @@
                     </span>
                 </div>
 
+                <!-- Thông báo khi đăng ký tài khoản mới thành công (Flash Message) -->
+                <div th:if="${successMessage != null}" class="alert alert-success d-flex align-items-center gap-2" role="alert">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span th:text="${successMessage}">Đăng ký thành công!</span>
+                </div>
+
                 <!-- Thông báo khi đăng xuất thành công -->
                 <div th:if="${param.logout != null}" class="alert alert-success d-flex align-items-center gap-2" role="alert">
                     <i class="bi bi-check-circle-fill"></i>
@@ -99,6 +105,11 @@
                         <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập
                     </button>
                 </form>
+
+                <div class="text-center small mt-3">
+                    Chưa có tài khoản sinh viên?
+                    <a th:href="@{/register}" class="fw-semibold text-decoration-none">Đăng ký sinh viên</a>
+                </div>
 
                 <!-- Gợi ý nhanh tài khoản mẫu để test nghiệm thu -->
                 <hr class="my-4">
