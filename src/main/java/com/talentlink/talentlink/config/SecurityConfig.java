@@ -2,9 +2,13 @@ package com.talentlink.talentlink.config;
 
 import com.talentlink.talentlink.entity.Education;
 import com.talentlink.talentlink.entity.Profile;
+import com.talentlink.talentlink.entity.ProfileSkill;
+import com.talentlink.talentlink.entity.Skill;
 import com.talentlink.talentlink.entity.User;
 import com.talentlink.talentlink.repository.EducationRepository;
 import com.talentlink.talentlink.repository.ProfileRepository;
+import com.talentlink.talentlink.repository.ProfileSkillRepository;
+import com.talentlink.talentlink.repository.SkillRepository;
 import com.talentlink.talentlink.repository.UserRepository;
 import com.talentlink.talentlink.service.CustomUserDetailsService;
 import java.math.BigDecimal;
@@ -64,11 +68,13 @@ public class SecurityConfig {
             UserRepository userRepository,
             ProfileRepository profileRepository,
             EducationRepository educationRepository,
+            SkillRepository skillRepository,
+            ProfileSkillRepository profileSkillRepository,
             PasswordEncoder passwordEncoder) {
         return args -> {
+            LocalDateTime now = LocalDateTime.now();
             if (userRepository.count() == 0) {
                 String defaultHash = passwordEncoder.encode("123456aA@");
-                LocalDateTime now = LocalDateTime.now();
 
                 User admin = new User();
                 admin.setEmail("admin@talentlink.demo");
@@ -124,7 +130,6 @@ public class SecurityConfig {
                 User savedStudent2 = userRepository.save(student2);
                 userRepository.save(lockedUser);
 
-                // Tạo sẵn hồ sơ và học vấn mẫu cho student01 (id=1) và student02 (id=2) để test chặn 403 khi đổi id trên URL
                 Profile p1 = new Profile();
                 p1.setUserId(savedStudent1.getId());
                 p1.setHeadline("Java Backend Fresher");
@@ -175,7 +180,69 @@ public class SecurityConfig {
                 edu2.setCreatedAt(now);
                 educationRepository.save(edu2);
             }
+
+            if (skillRepository.count() == 0) {
+                Skill s1 = createSeedSkill("Java", "java", "Ngôn ngữ", now);
+                Skill s2 = createSeedSkill("Python", "python", "Ngôn ngữ", now);
+                Skill s3 = createSeedSkill("Spring Boot", "spring-boot", "Framework", now);
+                Skill s4 = createSeedSkill("ReactJS", "reactjs", "Framework", now);
+                Skill s5 = createSeedSkill("MySQL", "mysql", "CSDL", now);
+                Skill s6 = createSeedSkill("PostgreSQL", "postgresql", "CSDL", now);
+                Skill s7 = createSeedSkill("Git & GitHub", "git-github", "Công cụ", now);
+                Skill s8 = createSeedSkill("Docker", "docker", "Công cụ", now);
+                Skill s9 = createSeedSkill("Làm việc nhóm (Teamwork)", "teamwork", "Kỹ năng mềm", now);
+                Skill s10 = createSeedSkill("Giao tiếp & Thuyết trình", "communication", "Kỹ năng mềm", now);
+
+                Skill savedJava = skillRepository.save(s1);
+                skillRepository.save(s2);
+                Skill savedSpring = skillRepository.save(s3);
+                skillRepository.save(s4);
+                Skill savedMysql = skillRepository.save(s5);
+                skillRepository.save(s6);
+                skillRepository.save(s7);
+                skillRepository.save(s8);
+                skillRepository.save(s9);
+                skillRepository.save(s10);
+
+                // Gắn kỹ năng Java và Spring Boot cho hồ sơ đầu tiên để kiểm thử "đã có sinh viên dùng thì chỉ ẩn, không xóa"
+                profileRepository.findAll().stream().findFirst().ifPresent(firstProfile -> {
+                    ProfileSkill ps1 = new ProfileSkill();
+                    ps1.setProfileId(firstProfile.getId());
+                    ps1.setSkillId(savedJava.getId());
+                    ps1.setProficiencyLevel(4);
+                    ps1.setYearsUsed(new BigDecimal("1.5"));
+                    ps1.setCreatedAt(now);
+
+                    ProfileSkill ps2 = new ProfileSkill();
+                    ps2.setProfileId(firstProfile.getId());
+                    ps2.setSkillId(savedSpring.getId());
+                    ps2.setProficiencyLevel(4);
+                    ps2.setYearsUsed(new BigDecimal("1.0"));
+                    ps2.setCreatedAt(now);
+
+                    ProfileSkill ps3 = new ProfileSkill();
+                    ps3.setProfileId(firstProfile.getId());
+                    ps3.setSkillId(savedMysql.getId());
+                    ps3.setProficiencyLevel(3);
+                    ps3.setYearsUsed(new BigDecimal("1.0"));
+                    ps3.setCreatedAt(now);
+
+                    profileSkillRepository.save(ps1);
+                    profileSkillRepository.save(ps2);
+                    profileSkillRepository.save(ps3);
+                });
+            }
         };
+    }
+
+    private Skill createSeedSkill(String name, String slug, String category, LocalDateTime now) {
+        Skill s = new Skill();
+        s.setName(name);
+        s.setSlug(slug);
+        s.setCategory(category);
+        s.setHidden(false);
+        s.setCreatedAt(now);
+        return s;
     }
 
     @Bean
