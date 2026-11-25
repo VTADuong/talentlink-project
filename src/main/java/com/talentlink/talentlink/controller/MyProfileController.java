@@ -3,14 +3,18 @@ package com.talentlink.talentlink.controller;
 import com.talentlink.talentlink.dto.AddProfileSkillDto;
 import com.talentlink.talentlink.dto.EducationDto;
 import com.talentlink.talentlink.dto.MyProfileUpdateDto;
+import com.talentlink.talentlink.dto.ProjectDto;
 import com.talentlink.talentlink.entity.Profile;
+import com.talentlink.talentlink.entity.Project;
 import com.talentlink.talentlink.entity.Skill;
 import com.talentlink.talentlink.entity.User;
 import com.talentlink.talentlink.service.EducationService;
 import com.talentlink.talentlink.service.MyProfileService;
 import com.talentlink.talentlink.service.MySkillService;
+import com.talentlink.talentlink.service.ProjectService;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
+import java.util.List;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,8 +27,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 /**
- * Controller quản lý Hồ sơ của tôi (/me/profile), Học vấn (/me/educations/**)
- * và Kỹ năng của tôi (/me/skills/**) (Task T4E7AA3, T4E7AA4, T4E7AA6).
+ * Controller quản lý Hồ sơ của tôi (/me/profile), Học vấn (/me/educations/**),
+ * Kỹ năng của tôi (/me/skills/**) và Dự án cá nhân (/me/projects/**)
+ * (Task T4E7AA3, T4E7AA4, T4E7AA6, T4E7AA7).
  */
 @Controller
 @RequestMapping("/me")
@@ -33,30 +38,24 @@ public class MyProfileController {
     private final MyProfileService myProfileService;
     private final EducationService educationService;
     private final MySkillService mySkillService;
+    private final ProjectService projectService;
 
     public MyProfileController(
             MyProfileService myProfileService,
             EducationService educationService,
-            MySkillService mySkillService) {
+            MySkillService mySkillService,
+            ProjectService projectService) {
         this.myProfileService = myProfileService;
         this.educationService = educationService;
         this.mySkillService = mySkillService;
+        this.projectService = projectService;
     }
 
     @GetMapping("/profile")
     public String viewAndEditProfile(Authentication authentication, Model model) {
         String currentEmail = authentication.getName();
         populateProfileData(currentEmail, model);
-
-        if (!model.containsAttribute("profileDto")) {
-            model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
-        }
-        if (!model.containsAttribute("educationDto")) {
-            model.addAttribute("educationDto", new EducationDto());
-        }
-        if (!model.containsAttribute("addSkillDto")) {
-            model.addAttribute("addSkillDto", new AddProfileSkillDto());
-        }
+        ensureDefaultFormDtos(currentEmail, model);
         return "me/profile";
     }
 
@@ -80,8 +79,7 @@ public class MyProfileController {
 
         if (bindingResult.hasErrors()) {
             populateProfileData(currentEmail, model);
-            model.addAttribute("educationDto", new EducationDto());
-            model.addAttribute("addSkillDto", new AddProfileSkillDto());
+            ensureDefaultFormDtos(currentEmail, model);
             return "me/profile";
         }
 
@@ -105,10 +103,9 @@ public class MyProfileController {
         EducationDto editDto = educationService.getMyEducationDtoForEdit(id, currentEmail);
 
         populateProfileData(currentEmail, model);
-        model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
         model.addAttribute("educationDto", editDto);
-        model.addAttribute("addSkillDto", new AddProfileSkillDto());
         model.addAttribute("editingEducation", true);
+        ensureDefaultFormDtos(currentEmail, model);
         return "me/profile";
     }
 
@@ -125,8 +122,7 @@ public class MyProfileController {
 
         if (bindingResult.hasErrors()) {
             populateProfileData(currentEmail, model);
-            model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
-            model.addAttribute("addSkillDto", new AddProfileSkillDto());
+            ensureDefaultFormDtos(currentEmail, model);
             return "me/profile";
         }
 
@@ -152,9 +148,8 @@ public class MyProfileController {
         if (bindingResult.hasErrors()) {
             educationService.getMyEducationDtoForEdit(id, currentEmail);
             populateProfileData(currentEmail, model);
-            model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
-            model.addAttribute("addSkillDto", new AddProfileSkillDto());
             model.addAttribute("editingEducation", true);
+            ensureDefaultFormDtos(currentEmail, model);
             return "me/profile";
         }
 
@@ -191,7 +186,6 @@ public class MyProfileController {
 
         String currentEmail = authentication.getName();
 
-        // Kiểm tra không cho phép chọn trùng kỹ năng
         if (!bindingResult.hasFieldErrors("skillId")
                 && mySkillService.isDuplicateSkillInProfile(currentEmail, addSkillDto.getSkillId())) {
             bindingResult.rejectValue("skillId", "skill.duplicate",
@@ -200,8 +194,7 @@ public class MyProfileController {
 
         if (bindingResult.hasErrors()) {
             populateProfileData(currentEmail, model);
-            model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
-            model.addAttribute("educationDto", new EducationDto());
+            ensureDefaultFormDtos(currentEmail, model);
             return "me/profile";
         }
 
@@ -225,6 +218,93 @@ public class MyProfileController {
         return "redirect:/me/profile";
     }
 
+    // =========================================================================
+    // QUẢN LÝ DỰ ÁN CÁ NHÂN TRÊN TRANG HỒ SƠ (Task T4E7AA7)
+    // =========================================================================
+
+    @GetMapping("/projects/{id}/edit")
+    public String editProjectForm(
+            @PathVariable("id") Long id,
+            Authentication authentication,
+            Model model) {
+
+        String currentEmail = authentication.getName();
+        ProjectDto editDto = projectService.getMyProjectDtoForEdit(id, currentEmail);
+
+        populateProfileData(currentEmail, model);
+        model.addAttribute("projectDto", editDto);
+        model.addAttribute("editingProject", true);
+        ensureDefaultFormDtos(currentEmail, model);
+        return "me/profile";
+    }
+
+    @PostMapping("/projects")
+    public String createProject(
+            @Valid @ModelAttribute("projectDto") ProjectDto projectDto,
+            BindingResult bindingResult,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        String currentEmail = authentication.getName();
+
+        // Kiểm tra giới hạn tối đa 20 dự án mỗi hồ sơ
+        if (projectService.hasReachedMaxProjects(currentEmail)) {
+            bindingResult.rejectValue("projectName", "project.limitReached",
+                    "Hồ sơ của bạn đã đạt giới hạn tối đa " + ProjectService.MAX_PROJECTS_PER_PROFILE + " dự án!");
+        }
+
+        if (bindingResult.hasErrors()) {
+            populateProfileData(currentEmail, model);
+            ensureDefaultFormDtos(currentEmail, model);
+            return "me/profile";
+        }
+
+        Project created = projectService.createProject(currentEmail, projectDto);
+        FlashMessageHelper.addSuccess(redirectAttributes,
+                "Đã thêm dự án cá nhân [" + created.getProjectName() + "] vào hồ sơ thành công!");
+        return "redirect:/me/profile";
+    }
+
+    @PostMapping("/projects/{id}")
+    public String updateProject(
+            @PathVariable("id") Long id,
+            @Valid @ModelAttribute("projectDto") ProjectDto projectDto,
+            BindingResult bindingResult,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes,
+            Model model) {
+
+        String currentEmail = authentication.getName();
+        projectDto.setId(id);
+
+        if (bindingResult.hasErrors()) {
+            projectService.getMyProjectDtoForEdit(id, currentEmail);
+            populateProfileData(currentEmail, model);
+            model.addAttribute("editingProject", true);
+            ensureDefaultFormDtos(currentEmail, model);
+            return "me/profile";
+        }
+
+        Project updated = projectService.updateProject(id, currentEmail, projectDto);
+        FlashMessageHelper.addSuccess(redirectAttributes,
+                "Đã cập nhật dự án cá nhân [" + updated.getProjectName() + "] thành công!");
+        return "redirect:/me/profile";
+    }
+
+    @PostMapping("/projects/{id}/delete")
+    public String deleteProject(
+            @PathVariable("id") Long id,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+
+        String currentEmail = authentication.getName();
+        projectService.deleteProject(id, currentEmail);
+        FlashMessageHelper.addSuccess(redirectAttributes,
+                "Đã xóa dự án cá nhân khỏi hồ sơ thành công!");
+        return "redirect:/me/profile";
+    }
+
     private void validateStartAndEndDate(EducationDto dto, BindingResult bindingResult) {
         if (dto.getStartDate() != null && dto.getEndDate() != null) {
             if (dto.getStartDate().isAfter(dto.getEndDate())) {
@@ -234,9 +314,26 @@ public class MyProfileController {
         }
     }
 
+    private void ensureDefaultFormDtos(String currentEmail, Model model) {
+        if (!model.containsAttribute("profileDto")) {
+            model.addAttribute("profileDto", myProfileService.buildFormDto(currentEmail));
+        }
+        if (!model.containsAttribute("educationDto")) {
+            model.addAttribute("educationDto", new EducationDto());
+        }
+        if (!model.containsAttribute("addSkillDto")) {
+            model.addAttribute("addSkillDto", new AddProfileSkillDto());
+        }
+        if (!model.containsAttribute("projectDto")) {
+            model.addAttribute("projectDto", new ProjectDto());
+        }
+    }
+
     private void populateProfileData(String currentEmail, Model model) {
         User currentUser = myProfileService.getCurrentUser(currentEmail);
         Profile myProfile = myProfileService.getOrCreateMyProfile(currentEmail);
+        List<Project> projects = projectService.listMyProjects(currentEmail);
+
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("myProfile", myProfile);
         model.addAttribute("educations", educationService.listMyEducations(currentEmail));
@@ -244,5 +341,8 @@ public class MyProfileController {
         model.addAttribute("availableSkills", mySkillService.listAvailableCatalogSkills());
         model.addAttribute("selectedSkillIds", mySkillService.getMySelectedSkillIds(currentEmail));
         model.addAttribute("levelDescriptions", MySkillService.LEVEL_DESCRIPTIONS);
+        model.addAttribute("projects", projects);
+        model.addAttribute("projectCount", projects.size());
+        model.addAttribute("maxProjects", ProjectService.MAX_PROJECTS_PER_PROFILE);
     }
 }

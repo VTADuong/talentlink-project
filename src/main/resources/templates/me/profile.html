@@ -414,7 +414,7 @@
             </div>
 
             <!-- PHẦN 3: KỸ NĂNG CỦA TÔI (Task T4E7AA6) -->
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                     <div>
                         <h5 class="fw-bold text-dark mb-0">
@@ -567,6 +567,224 @@
                             <div class="text-end mt-3">
                                 <button type="submit" class="btn btn-primary px-4 fw-semibold">
                                     <i class="bi bi-plus-lg me-1"></i>Thêm kỹ năng vào hồ sơ
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHẦN 4: DỰ ÁN CÁ NHÂN (Task T4E7AA7) -->
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold text-dark mb-0">
+                            <i class="bi bi-code-square text-primary me-2"></i>4. Dự án cá nhân
+                        </h5>
+                        <span class="text-muted small">
+                            Tên dự án, vai trò, công nghệ dùng, link GitHub (URL hợp lệ), link demo (tùy chọn), mô tả. Tối đa 20 dự án.
+                        </span>
+                    </div>
+                    <span class="badge"
+                          th:classappend="${projectCount != null and projectCount >= maxProjects} ? 'bg-danger' : 'bg-primary-subtle text-primary'"
+                          th:text="${(projectCount != null ? projectCount : 0) + ' / ' + (maxProjects != null ? maxProjects : 20) + ' dự án'}">
+                        0 / 20 dự án
+                    </span>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Danh sách dự án cá nhân -->
+                    <div th:if="${projects == null or #lists.isEmpty(projects)}"
+                         class="alert alert-light border text-center text-muted small mb-4">
+                        Chưa có dự án cá nhân nào. Hãy thêm dự án ở biểu mẫu bên dưới.
+                    </div>
+
+                    <div th:if="${projects != null and !#lists.isEmpty(projects)}" class="mb-4">
+                        <div th:each="proj : ${projects}"
+                             class="border rounded-3 p-3 mb-3 bg-light-subtle">
+                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                <div>
+                                    <div class="fw-bold text-dark fs-6">
+                                        <i class="bi bi-folder-check text-primary me-1"></i>
+                                        <span th:text="${proj.projectName}">Tên dự án</span>
+                                        <span class="badge bg-secondary-subtle text-secondary ms-1"
+                                              th:text="${proj.roleInProject}">Backend Developer</span>
+                                    </div>
+                                    <div class="small text-secondary mt-1">
+                                        <strong>Công nghệ sử dụng:</strong>
+                                        <span class="text-primary fw-semibold" th:text="${proj.techStack}">Java 17, Spring Boot, MySQL</span>
+                                    </div>
+                                </div>
+
+                                <!-- Nút Sửa & Xóa (Xóa có hỏi xác nhận) -->
+                                <div class="d-flex gap-2">
+                                    <a th:href="@{/me/projects/{id}/edit(id=${proj.id})}"
+                                       class="btn btn-outline-primary btn-sm">
+                                        <i class="bi bi-pencil me-1"></i>Sửa
+                                    </a>
+                                    <form th:action="@{/me/projects/{id}/delete(id=${proj.id})}"
+                                          method="post"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Bạn có chắc chắn muốn XÓA dự án cá nhân này không?');">
+                                        <input type="hidden" th:if="${_csrf != null}"
+                                               th:name="${_csrf.parameterName}"
+                                               th:value="${_csrf.token}"/>
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="bi bi-trash me-1"></i>Xóa
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <p class="small text-dark mt-2 mb-2"
+                               style="white-space: pre-line;"
+                               th:text="${proj.description}">
+                                Mô tả chi tiết dự án...
+                            </p>
+
+                            <!-- Link GitHub & Link Demo mở tab mới (target="_blank" rel="noopener noreferrer") -->
+                            <div class="d-flex flex-wrap gap-3 small mt-2 pt-2 border-top">
+                                <a th:if="${proj.githubUrl != null and !#strings.isEmpty(proj.githubUrl)}"
+                                   th:href="${proj.githubUrl}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="text-decoration-none fw-semibold text-dark">
+                                    <i class="bi bi-github me-1"></i>Link GitHub
+                                    <i class="bi bi-box-arrow-up-right ms-1 small"></i>
+                                </a>
+                                <a th:if="${proj.demoUrl != null and !#strings.isEmpty(proj.demoUrl)}"
+                                   th:href="${proj.demoUrl}"
+                                   target="_blank"
+                                   rel="noopener noreferrer"
+                                   class="text-decoration-none fw-semibold text-primary">
+                                    <i class="bi bi-globe2 me-1"></i>Link Demo trực tuyến
+                                    <i class="bi bi-box-arrow-up-right ms-1 small"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Thêm mới hoặc Cập nhật Dự án cá nhân -->
+                    <div class="border-top pt-3">
+                        <h6 class="fw-bold text-dark mb-3">
+                            <span th:if="${editingProject == true}">
+                                <i class="bi bi-pencil-fill text-warning me-1"></i>
+                                Cập nhật Dự án cá nhân (#<span th:text="${projectDto.id}">1</span>)
+                            </span>
+                            <span th:unless="${editingProject == true}">
+                                <i class="bi bi-plus-circle-fill text-primary me-1"></i>
+                                Thêm Dự án cá nhân mới (Tối đa 20 dự án)
+                            </span>
+                        </h6>
+
+                        <div th:if="${editingProject != true and projectCount != null and projectCount >= maxProjects}"
+                             class="alert alert-warning small">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                            Bạn đã đạt giới hạn tối đa <strong th:text="${maxProjects}">20</strong> dự án cho mỗi hồ sơ.
+                            Vui lòng xóa hoặc chỉnh sửa dự án hiện có.
+                        </div>
+
+                        <form th:action="${editingProject == true} ? @{/me/projects/{id}(id=${projectDto.id})} : @{/me/projects}"
+                              th:object="${projectDto}"
+                              method="post"
+                              novalidate>
+                            <input type="hidden" th:if="${_csrf != null}"
+                                   th:name="${_csrf.parameterName}"
+                                   th:value="${_csrf.token}"/>
+
+                            <div class="row g-3">
+                                <!-- 1. Tên dự án -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small">
+                                        Tên dự án <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" th:field="*{projectName}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('projectName')} ? 'is-invalid' : ''"
+                                           placeholder="VD: Hệ thống Kết nối Nhân tài TalentLink">
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('projectName')}"
+                                         th:errors="*{projectName}"></div>
+                                </div>
+
+                                <!-- 2. Vai trò trong dự án -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small">
+                                        Vai trò trong dự án <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" th:field="*{roleInProject}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('roleInProject')} ? 'is-invalid' : ''"
+                                           placeholder="VD: Backend Developer / Team Lead">
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('roleInProject')}"
+                                         th:errors="*{roleInProject}"></div>
+                                </div>
+
+                                <!-- 3. Công nghệ dùng -->
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold small">
+                                        Công nghệ sử dụng <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" th:field="*{techStack}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('techStack')} ? 'is-invalid' : ''"
+                                           placeholder="VD: Java 17, Spring Boot 3, Thymeleaf, Spring Security, MySQL, Flyway">
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('techStack')}"
+                                         th:errors="*{techStack}"></div>
+                                </div>
+
+                                <!-- 4. Link GitHub (URL hợp lệ) -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small">
+                                        Link GitHub (URL hợp lệ) <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="url" th:field="*{githubUrl}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('githubUrl')} ? 'is-invalid' : ''"
+                                           placeholder="https://github.com/username/project-repo">
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('githubUrl')}"
+                                         th:errors="*{githubUrl}"></div>
+                                </div>
+
+                                <!-- 5. Link Demo (Tùy chọn, URL hợp lệ) -->
+                                <div class="col-md-6">
+                                    <label class="form-label fw-semibold small">
+                                        Link Demo (Tùy chọn, URL hợp lệ)
+                                    </label>
+                                    <input type="url" th:field="*{demoUrl}" class="form-control"
+                                           th:classappend="${#fields.hasErrors('demoUrl')} ? 'is-invalid' : ''"
+                                           placeholder="https://demo-project.example.com">
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('demoUrl')}"
+                                         th:errors="*{demoUrl}"></div>
+                                </div>
+
+                                <!-- 6. Mô tả dự án -->
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold small">
+                                        Mô tả dự án &amp; Đóng góp cá nhân <span class="text-danger">*</span>
+                                    </label>
+                                    <textarea th:field="*{description}" rows="3" class="form-control"
+                                              th:classappend="${#fields.hasErrors('description')} ? 'is-invalid' : ''"
+                                              placeholder="Mô tả bài toán, các chức năng bạn trực tiếp xây dựng và kết quả đạt được..."></textarea>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('description')}"
+                                         th:errors="*{description}"></div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-end gap-2 mt-3">
+                                <a th:if="${editingProject == true}"
+                                   th:href="@{/me/profile}"
+                                   class="btn btn-outline-secondary">
+                                    Hủy sửa
+                                </a>
+                                <button type="submit"
+                                        class="btn btn-primary px-4 fw-semibold"
+                                        th:disabled="${editingProject != true and projectCount != null and projectCount >= maxProjects}">
+                                    <i class="bi bi-check2-circle me-1"></i>
+                                    <span th:text="${editingProject == true ? 'Lưu cập nhật dự án' : '+ Thêm dự án cá nhân'}">
+                                        + Thêm dự án cá nhân
+                                    </span>
                                 </button>
                             </div>
                         </form>
